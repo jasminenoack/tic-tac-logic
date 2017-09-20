@@ -6,6 +6,6 @@ export class Greeter {
     }
 
     greet() {
-        console.log("Hello,", this.name)
+        return `Hello, ${this.name}`
     }
 }

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
@@ -18,11 +18,19 @@
   },
   "homepage": "https://github.com/jasminenoack/tic-tac-logic#readme",
   "devDependencies": {
+    "@types/jasmine": "^2.6.0",
+    "es6-promise": "^4.1.1",
+    "jasmine": "^2.8.0",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-typescript": "^3.0.6",
+    "karma-webpack": "^2.0.4",
     "lodash": "^4.17.4",
+    "ts-loader": "^2.3.7",
     "typescript": "^2.5.2"
   },
   "dependencies": {
-    "ts-loader": "^2.3.7",
     "webpack": "^3.6.0"
   }
 }
