@@ -1,33 +1,28 @@
 {
-  "name": "tic-tac-logic",
+  "name": "tictaclogic",
   "version": "1.0.0",
-  "description": "Solver for Tic Tac Logic Puzzles",
-  "directories": {
-    "src": "src",
-    "test": "test"
-  },
-  "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
+  "description": "solver for tic tac logic puzzles",
+  "main": "index.js",
   "scripts": {
-    "test": "tsc && tslint src/**/*.ts test/**/*.ts && ava ./dist/test/*.js"
+    "build": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:jasminenoack/tic-tac-logic.git"
+    "url": "git+https://github.com/jasminenoack/tic-tac-logic.git"
   },
-  "devDependencies": {
-    "@types/node": "^6.0.45",
-    "@types/ramda": "0.0.2",
-    "ava": "^0.16.0",
-    "source-map-support": "^0.4.2",
-    "tslint": "^3.15.1",
-    "typescript": "^2.1.1"
-  },
-  "author": "Jasmine Noack",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/jasminenoack/tic-tac-logic/issues"
   },
-  "homepage": "",
-  "dependencies": {}
+  "homepage": "https://github.com/jasminenoack/tic-tac-logic#readme",
+  "devDependencies": {
+    "lodash": "^4.17.4",
+    "typescript": "^2.5.2"
+  },
+  "dependencies": {
+    "ts-loader": "^2.3.7",
+    "webpack": "^3.6.0"
+  }
 }

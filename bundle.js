@@ -70,10 +70,28 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function add(a, b) {
-    return a + b;
-}
-exports.add = add;
+var greeter_1 = __webpack_require__(1);
+var greeter = new greeter_1.Greeter("World");
+console.log(greeter.greet());
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Greeter = /** @class */ (function () {
+    function Greeter(name) {
+        this.name = name;
+    }
+    Greeter.prototype.greet = function () {
+        console.log("Hello,", this.name);
+    };
+    return Greeter;
+}());
+exports.Greeter = Greeter;
 
 
 /***/ })
