@@ -3,7 +3,15 @@ export class Spot {
 
     }
 
-    public get() {
+    public get(): string {
+
+    }
+
+    public set(value: string) {
+
+    }
+
+    public given() {
 
     }
 }

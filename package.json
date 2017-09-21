@@ -29,6 +29,7 @@
     "karma-webpack": "^2.0.4",
     "lodash": "^4.17.4",
     "ts-loader": "^2.3.7",
+    "tslint": "^5.7.0",
     "typescript": "^2.5.2"
   },
   "dependencies": {
