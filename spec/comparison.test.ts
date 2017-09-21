@@ -1,7 +1,7 @@
 import { ComparisonManager } from "../src/comparisonManager";
 import { Spot } from "../src/spot";
 
-describe("spots match", () => {
+describe("ComparisonManager", () => {
     let oSpotOne;
     let oSpotTwo;
     let xSpotOne;

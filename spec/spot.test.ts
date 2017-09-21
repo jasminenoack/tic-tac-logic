@@ -1,6 +1,6 @@
 import { Spot } from "../src/spot";
 
-describe("spot", () => {
+describe("Spot", () => {
     it("should create a spot", () => {
         const spot = new Spot();
         expect(spot).toBeTruthy();
