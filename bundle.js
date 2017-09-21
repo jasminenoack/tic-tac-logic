@@ -72,6 +72,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var board_1 = __webpack_require__(2);
 var puzzles = __webpack_require__(1);
+var stepManager_1 = __webpack_require__(5);
 var windowSearch = window.location.search;
 var element = document.getElementById("tic-tac-puzzle");
 function createBoard(board) {
@@ -103,6 +104,8 @@ if (windowSearch) {
         var board = new board_1.Board(puzzleData.width, puzzleData.height, puzzleData.xs, puzzleData.os);
         createBoard(board);
         updateAllSpots(board);
+        var manager = new stepManager_1.StepManager(board);
+        // setInterval()
     }
 }
 
@@ -217,6 +220,33 @@ var IndexManager = /** @class */ (function () {
         }
         return results;
     };
+    IndexManager.getNeighbors = function (indexes, type, width, height) {
+        var firstProcessedIndex = indexes[0];
+        var lastProcessedIndex = indexes[indexes.length - 1];
+        var currentIndexes;
+        if (type === "row") {
+            currentIndexes = this.getRowIndexes(this.getRowStart(firstProcessedIndex, width), width);
+        }
+        else if (type === "column") {
+            currentIndexes = this.getColumnIndexes(this.getColumnStart(firstProcessedIndex, width), width, height);
+        }
+        var startIndex = currentIndexes.indexOf(firstProcessedIndex);
+        var endIndex = currentIndexes.indexOf(lastProcessedIndex);
+        var results = [];
+        if (startIndex) {
+            results.push(currentIndexes[startIndex - 1]);
+        }
+        if (endIndex < currentIndexes.length - 1) {
+            results.push(currentIndexes[endIndex + 1]);
+        }
+        return results;
+    };
+    IndexManager.getRowStart = function (index, width) {
+        return Math.floor(index / width);
+    };
+    IndexManager.getColumnStart = function (index, width) {
+        return index % width;
+    };
     return IndexManager;
 }());
 exports.IndexManager = IndexManager;
@@ -255,6 +285,110 @@ var Spot = /** @class */ (function () {
     return Spot;
 }());
 exports.Spot = Spot;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var comparisonManager_1 = __webpack_require__(6);
+var indexManager_1 = __webpack_require__(3);
+var StepManager = /** @class */ (function () {
+    function StepManager(board) {
+        this.board = board;
+        this.resetState();
+    }
+    StepManager.prototype.resetState = function () {
+        this.state = {
+            consecutivePairs: {
+                checkEmpty: [],
+                columns: [],
+                currentPair: [],
+                currentType: "",
+                insertOpposite: [],
+                rows: [],
+            },
+            madeAChange: true,
+        };
+    };
+    StepManager.prototype.setUp = function () {
+        this.resetState();
+        this.state.consecutivePairs.rows = indexManager_1.IndexManager.getConsecutiveRowPairs(this.board.width, this.board.height);
+        this.state.consecutivePairs.columns = indexManager_1.IndexManager.getConsecutiveColumnPairs(this.board.width, this.board.height);
+        this.state.madeAChange = false;
+    };
+    StepManager.prototype.currentStep = function () {
+        if (this.state.consecutivePairs.rows.length ||
+            this.state.consecutivePairs.columns.length ||
+            this.state.consecutivePairs.currentType) {
+            return "consecutivePairs";
+        }
+    };
+    StepManager.prototype.takeStep = function () {
+        switch (this.currentStep()) {
+            case "consecutivePairs":
+                this.takeConsecutivePairsStep();
+                break;
+        }
+    };
+    StepManager.prototype.resetConsecutivePairs = function () {
+        this.state.consecutivePairs.currentType = "";
+        this.state.consecutivePairs.currentPair = [];
+        this.state.consecutivePairs.insertOpposite = [];
+        this.state.consecutivePairs.checkEmpty = [];
+    };
+    StepManager.prototype.takeConsecutivePairsStep = function () {
+        if (this.state.consecutivePairs.currentPair.length) {
+            var pair = this.state.consecutivePairs.currentPair;
+            var spots = this.board.spots;
+            if (this.state.consecutivePairs.insertOpposite.length) {
+                console.log("INSERT OPPOSITE");
+            }
+            else if (this.state.consecutivePairs.checkEmpty.length) {
+                console.log("CHECK EMPTY");
+            }
+            else if (comparisonManager_1.ComparisonManager.compareTwo(spots[pair[0]], spots[pair[1]])) {
+                this.state.consecutivePairs.checkEmpty = indexManager_1.IndexManager.getNeighbors(pair, this.state.consecutivePairs.currentType, this.board.width, this.board.height);
+            }
+            else {
+                this.resetConsecutivePairs();
+            }
+        }
+        else if (this.state.consecutivePairs.rows.length) {
+            this.state.consecutivePairs.currentPair = this.state.consecutivePairs.rows.shift();
+            this.state.consecutivePairs.currentType = "row";
+        }
+        else if (this.state.consecutivePairs.columns.length) {
+            this.state.consecutivePairs.currentPair = this.state.consecutivePairs.columns.shift();
+            this.state.consecutivePairs.currentType = "column";
+        }
+    };
+    return StepManager;
+}());
+exports.StepManager = StepManager;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ComparisonManager = /** @class */ (function () {
+    function ComparisonManager() {
+    }
+    ComparisonManager.compareTwo = function (firstSpot, secondSpot) {
+        var firstValue = firstSpot.get();
+        var secondValue = secondSpot.get();
+        return !!(firstValue && secondValue && firstValue === secondValue);
+    };
+    return ComparisonManager;
+}());
+exports.ComparisonManager = ComparisonManager;
 
 
 /***/ })

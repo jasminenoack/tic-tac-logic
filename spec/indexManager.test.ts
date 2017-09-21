@@ -179,4 +179,106 @@ describe("IndexManager", () => {
             ]);
         });
     });
+
+    describe("getNeighbors", () => {
+        describe("for pairs in rows", () => {
+            it("0", () => {
+                expect(IndexManager.getNeighbors([0, 1], "row", 6, 6)).toEqual([2]);
+                expect(IndexManager.getNeighbors([1, 2], "row", 6, 6)).toEqual([0, 3]);
+                expect(IndexManager.getNeighbors([2, 3], "row", 6, 6)).toEqual([1, 4]);
+                expect(IndexManager.getNeighbors([3, 4], "row", 6, 6)).toEqual([2, 5]);
+                expect(IndexManager.getNeighbors([4, 5], "row", 6, 6)).toEqual([3]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.getNeighbors([6, 7], "row", 6, 6)).toEqual([8]);
+                expect(IndexManager.getNeighbors([7, 8], "row", 6, 6)).toEqual([6, 9]);
+                expect(IndexManager.getNeighbors([8, 9], "row", 6, 6)).toEqual([7, 10]);
+                expect(IndexManager.getNeighbors([9, 10], "row", 6, 6)).toEqual([8, 11]);
+                expect(IndexManager.getNeighbors([10, 11], "row", 6, 6)).toEqual([9]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.getNeighbors([12, 13], "row", 6, 6)).toEqual([14]);
+                expect(IndexManager.getNeighbors([13, 14], "row", 6, 6)).toEqual([12, 15]);
+                expect(IndexManager.getNeighbors([14, 15], "row", 6, 6)).toEqual([13, 16]);
+                expect(IndexManager.getNeighbors([15, 16], "row", 6, 6)).toEqual([14, 17]);
+                expect(IndexManager.getNeighbors([16, 17], "row", 6, 6)).toEqual([15]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.getNeighbors([18, 19], "row", 6, 6)).toEqual([20]);
+                expect(IndexManager.getNeighbors([19, 20], "row", 6, 6)).toEqual([18, 21]);
+                expect(IndexManager.getNeighbors([20, 21], "row", 6, 6)).toEqual([19, 22]);
+                expect(IndexManager.getNeighbors([21, 22], "row", 6, 6)).toEqual([20, 23]);
+                expect(IndexManager.getNeighbors([22, 23], "row", 6, 6)).toEqual([21]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.getNeighbors([24, 25], "row", 6, 6)).toEqual([26]);
+                expect(IndexManager.getNeighbors([25, 26], "row", 6, 6)).toEqual([24, 27]);
+                expect(IndexManager.getNeighbors([26, 27], "row", 6, 6)).toEqual([25, 28]);
+                expect(IndexManager.getNeighbors([27, 28], "row", 6, 6)).toEqual([26, 29]);
+                expect(IndexManager.getNeighbors([28, 29], "row", 6, 6)).toEqual([27]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.getNeighbors([30, 31], "row", 6, 6)).toEqual([32]);
+                expect(IndexManager.getNeighbors([31, 32], "row", 6, 6)).toEqual([30, 33]);
+                expect(IndexManager.getNeighbors([32, 33], "row", 6, 6)).toEqual([31, 34]);
+                expect(IndexManager.getNeighbors([33, 34], "row", 6, 6)).toEqual([32, 35]);
+                expect(IndexManager.getNeighbors([34, 35], "row", 6, 6)).toEqual([33]);
+            });
+        });
+
+        describe("for pairs in columns", () => {
+            it("0", () => {
+                expect(IndexManager.getNeighbors([0, 6], "column", 6, 6)).toEqual([12]);
+                expect(IndexManager.getNeighbors([6, 12], "column", 6, 6)).toEqual([0, 18]);
+                expect(IndexManager.getNeighbors([12, 18], "column", 6, 6)).toEqual([6, 24]);
+                expect(IndexManager.getNeighbors([18, 24], "column", 6, 6)).toEqual([12, 30]);
+                expect(IndexManager.getNeighbors([24, 30], "column", 6, 6)).toEqual([18]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.getNeighbors([1, 7], "column", 6, 6)).toEqual([13]);
+                expect(IndexManager.getNeighbors([7, 13], "column", 6, 6)).toEqual([1, 19]);
+                expect(IndexManager.getNeighbors([13, 19], "column", 6, 6)).toEqual([7, 25]);
+                expect(IndexManager.getNeighbors([19, 25], "column", 6, 6)).toEqual([13, 31]);
+                expect(IndexManager.getNeighbors([25, 31], "column", 6, 6)).toEqual([19]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.getNeighbors([2, 8], "column", 6, 6)).toEqual([14]);
+                expect(IndexManager.getNeighbors([8, 14], "column", 6, 6)).toEqual([2, 20]);
+                expect(IndexManager.getNeighbors([14, 20], "column", 6, 6)).toEqual([8, 26]);
+                expect(IndexManager.getNeighbors([20, 26], "column", 6, 6)).toEqual([14, 32]);
+                expect(IndexManager.getNeighbors([26, 32], "column", 6, 6)).toEqual([20]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.getNeighbors([3, 9], "column", 6, 6)).toEqual([15]);
+                expect(IndexManager.getNeighbors([9, 15], "column", 6, 6)).toEqual([3, 21]);
+                expect(IndexManager.getNeighbors([15, 21], "column", 6, 6)).toEqual([9, 27]);
+                expect(IndexManager.getNeighbors([21, 27], "column", 6, 6)).toEqual([15, 33]);
+                expect(IndexManager.getNeighbors([27, 33], "column", 6, 6)).toEqual([21]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.getNeighbors([4, 10], "column", 6, 6)).toEqual([16]);
+                expect(IndexManager.getNeighbors([10, 16], "column", 6, 6)).toEqual([4, 22]);
+                expect(IndexManager.getNeighbors([16, 22], "column", 6, 6)).toEqual([10, 28]);
+                expect(IndexManager.getNeighbors([22, 28], "column", 6, 6)).toEqual([16, 34]);
+                expect(IndexManager.getNeighbors([28, 34], "column", 6, 6)).toEqual([22]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.getNeighbors([5, 11], "column", 6, 6)).toEqual([17]);
+                expect(IndexManager.getNeighbors([11, 17], "column", 6, 6)).toEqual([5, 23]);
+                expect(IndexManager.getNeighbors([17, 23], "column", 6, 6)).toEqual([11, 29]);
+                expect(IndexManager.getNeighbors([23, 29], "column", 6, 6)).toEqual([17, 35]);
+                expect(IndexManager.getNeighbors([29, 35], "column", 6, 6)).toEqual([23]);
+            });
+        });
+    });
 });

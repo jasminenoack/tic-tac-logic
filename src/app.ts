@@ -1,5 +1,6 @@
 import { Board } from "./board";
 import * as puzzles from "./puzzles";
+import { StepManager } from "./stepManager";
 
 const windowSearch = window.location.search;
 const element = document.getElementById("tic-tac-puzzle");
@@ -42,5 +43,9 @@ if (windowSearch) {
         );
         createBoard(board);
         updateAllSpots(board);
+
+        const manager = new StepManager(board);
+
+        // setInterval()
     }
 }

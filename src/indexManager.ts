@@ -44,4 +44,34 @@ export class IndexManager {
         }
         return results;
     }
+
+    public static getNeighbors(indexes: number[], type: string, width: number, height: number) {
+        const firstProcessedIndex = indexes[0];
+        const lastProcessedIndex = indexes[indexes.length - 1];
+        let currentIndexes;
+        if (type === "row") {
+            currentIndexes = this.getRowIndexes(this.getRowStart(firstProcessedIndex, width), width);
+        } else if (type === "column") {
+            currentIndexes = this.getColumnIndexes(this.getColumnStart(firstProcessedIndex, width), width, height);
+        }
+        const startIndex = currentIndexes.indexOf(firstProcessedIndex);
+        const endIndex = currentIndexes.indexOf(lastProcessedIndex);
+
+        const results = [];
+        if (startIndex) {
+            results.push(currentIndexes[startIndex - 1]);
+        }
+        if (endIndex < currentIndexes.length - 1) {
+            results.push(currentIndexes[endIndex + 1]);
+        }
+        return results;
+    }
+
+    private static getRowStart(index: number, width: number) {
+        return Math.floor(index / width);
+    }
+
+    private static getColumnStart(index: number, width: number) {
+        return index % width;
+    }
 }
