@@ -27,101 +27,103 @@ describe("board", () => {
         board = new Board(width, height, xs, os);
     });
 
-    it("creates a board", () => {
-        expect(board).toBeTruthy();
-    });
+    describe("create", () => {
+        it("creates a board", () => {
+            expect(board).toBeTruthy();
+        });
 
-    it("creates spots for the board", () => {
-        expect(board.spots[0] instanceof Spot).toBeTruthy();
-    });
+        it("creates spots for the board", () => {
+            expect(board.spots[0] instanceof Spot).toBeTruthy();
+        });
 
-    it("sets the values on the board", () => {
-        expect(board.value(0)).toBeFalsy();
-        expect(board.value(1)).toEqual("X");
-        expect(board.value(2)).toEqual("X");
-        expect(board.value(3)).toBeFalsy();
-        expect(board.value(4)).toBeFalsy();
-        expect(board.value(5)).toBeFalsy();
+        it("sets the values on the board", () => {
+            expect(board.value(0)).toBeFalsy();
+            expect(board.value(1)).toEqual("X");
+            expect(board.value(2)).toEqual("X");
+            expect(board.value(3)).toBeFalsy();
+            expect(board.value(4)).toBeFalsy();
+            expect(board.value(5)).toBeFalsy();
 
-        expect(board.value(6)).toBeFalsy();
-        expect(board.value(7)).toBeFalsy();
-        expect(board.value(8)).toBeFalsy();
-        expect(board.value(9)).toBeFalsy();
-        expect(board.value(10)).toBeFalsy();
-        expect(board.value(11)).toEqual("O");
+            expect(board.value(6)).toBeFalsy();
+            expect(board.value(7)).toBeFalsy();
+            expect(board.value(8)).toBeFalsy();
+            expect(board.value(9)).toBeFalsy();
+            expect(board.value(10)).toBeFalsy();
+            expect(board.value(11)).toEqual("O");
 
-        expect(board.value(12)).toEqual("X");
-        expect(board.value(13)).toBeFalsy();
-        expect(board.value(14)).toBeFalsy();
-        expect(board.value(15)).toEqual("O");
-        expect(board.value(16)).toBeFalsy();
-        expect(board.value(17)).toBeFalsy();
+            expect(board.value(12)).toEqual("X");
+            expect(board.value(13)).toBeFalsy();
+            expect(board.value(14)).toBeFalsy();
+            expect(board.value(15)).toEqual("O");
+            expect(board.value(16)).toBeFalsy();
+            expect(board.value(17)).toBeFalsy();
 
-        expect(board.value(18)).toBeFalsy();
-        expect(board.value(19)).toEqual("O");
-        expect(board.value(20)).toBeFalsy();
-        expect(board.value(21)).toBeFalsy();
-        expect(board.value(22)).toBeFalsy();
-        expect(board.value(23)).toBeFalsy();
+            expect(board.value(18)).toBeFalsy();
+            expect(board.value(19)).toEqual("O");
+            expect(board.value(20)).toBeFalsy();
+            expect(board.value(21)).toBeFalsy();
+            expect(board.value(22)).toBeFalsy();
+            expect(board.value(23)).toBeFalsy();
 
-        expect(board.value(24)).toBeFalsy();
-        expect(board.value(25)).toEqual("X");
-        expect(board.value(26)).toBeFalsy();
-        expect(board.value(27)).toBeFalsy();
-        expect(board.value(28)).toEqual("O");
-        expect(board.value(29)).toBeFalsy();
+            expect(board.value(24)).toBeFalsy();
+            expect(board.value(25)).toEqual("X");
+            expect(board.value(26)).toBeFalsy();
+            expect(board.value(27)).toBeFalsy();
+            expect(board.value(28)).toEqual("O");
+            expect(board.value(29)).toBeFalsy();
 
-        expect(board.value(30)).toBeFalsy();
-        expect(board.value(31)).toBeFalsy();
-        expect(board.value(32)).toBeFalsy();
-        expect(board.value(33)).toBeFalsy();
-        expect(board.value(34)).toEqual("O");
-        expect(board.value(35)).toBeFalsy();
-    });
+            expect(board.value(30)).toBeFalsy();
+            expect(board.value(31)).toBeFalsy();
+            expect(board.value(32)).toBeFalsy();
+            expect(board.value(33)).toBeFalsy();
+            expect(board.value(34)).toEqual("O");
+            expect(board.value(35)).toBeFalsy();
+        });
 
-    it("creates a 4 * 5 board", () => {
-        height = 4;
-        width = 5;
-        xs = [
-            [0, 0],
-            [1, 3],
-            [1, 4],
-            [3, 4],
-        ];
-        os = [
-            [0, 1],
-            [2, 3],
-            [3, 1],
-        ];
-        board = new Board(width, height, xs, os);
+        it("creates a 4 * 5 board", () => {
+            height = 4;
+            width = 5;
+            xs = [
+                [0, 0],
+                [1, 3],
+                [1, 4],
+                [3, 4],
+            ];
+            os = [
+                [0, 1],
+                [2, 3],
+                [3, 1],
+            ];
+            board = new Board(width, height, xs, os);
 
-        expect(board.value(0)).toEqual("X");
-        expect(board.value(1)).toEqual("O");
-        expect(board.value(2)).toBeFalsy();
-        expect(board.value(3)).toBeFalsy();
-        expect(board.value(4)).toBeFalsy();
+            expect(board.value(0)).toEqual("X");
+            expect(board.value(1)).toEqual("O");
+            expect(board.value(2)).toBeFalsy();
+            expect(board.value(3)).toBeFalsy();
+            expect(board.value(4)).toBeFalsy();
 
-        expect(board.value(5)).toBeFalsy();
-        expect(board.value(6)).toBeFalsy();
-        expect(board.value(7)).toBeFalsy();
-        expect(board.value(8)).toEqual("X");
-        expect(board.value(9)).toEqual("X");
+            expect(board.value(5)).toBeFalsy();
+            expect(board.value(6)).toBeFalsy();
+            expect(board.value(7)).toBeFalsy();
+            expect(board.value(8)).toEqual("X");
+            expect(board.value(9)).toEqual("X");
 
-        expect(board.value(10)).toBeFalsy();
-        expect(board.value(11)).toBeFalsy();
-        expect(board.value(12)).toBeFalsy();
-        expect(board.value(13)).toEqual("O");
-        expect(board.value(14)).toBeFalsy();
+            expect(board.value(10)).toBeFalsy();
+            expect(board.value(11)).toBeFalsy();
+            expect(board.value(12)).toBeFalsy();
+            expect(board.value(13)).toEqual("O");
+            expect(board.value(14)).toBeFalsy();
 
-        expect(board.value(15)).toBeFalsy();
-        expect(board.value(16)).toEqual("O");
-        expect(board.value(17)).toBeFalsy();
-        expect(board.value(18)).toBeFalsy();
-        expect(board.value(19)).toEqual("X");
-    });
+            expect(board.value(15)).toBeFalsy();
+            expect(board.value(16)).toEqual("O");
+            expect(board.value(17)).toBeFalsy();
+            expect(board.value(18)).toBeFalsy();
+            expect(board.value(19)).toEqual("X");
+        });
 
-    it("sets the width and height of the board", () => {
-        expect(board.width).toEqual(6);
-        expect(board.height).toEqual(6);
+        it("sets the width and height of the board", () => {
+            expect(board.width).toEqual(6);
+            expect(board.height).toEqual(6);
+        });
     });
 });
