@@ -105,8 +105,6 @@ if (windowSearch) {
         updateAllSpots(board);
     }
 }
-// document.getElementById("puzzle-name").innerText = boardType;
-// gameUtils.setUp(board);
 
 
 /***/ }),
@@ -198,6 +196,26 @@ var IndexManager = /** @class */ (function () {
     };
     IndexManager.findIndex = function (row, column, width) {
         return row * width + column;
+    };
+    IndexManager.getConsecutiveRowPairs = function (width, height) {
+        var results = [];
+        for (var i = 0; i < height; i++) {
+            var rowIndexes = this.getRowIndexes(i, width);
+            for (var j = 1; j < rowIndexes.length; j++) {
+                results.push([rowIndexes[j - 1], rowIndexes[j]]);
+            }
+        }
+        return results;
+    };
+    IndexManager.getConsecutiveColumnPairs = function (width, height) {
+        var results = [];
+        for (var i = 0; i < width; i++) {
+            var columnIndexes = this.getColumnIndexes(i, width, height);
+            for (var j = 1; j < columnIndexes.length; j++) {
+                results.push([columnIndexes[j - 1], columnIndexes[j]]);
+            }
+        }
+        return results;
     };
     return IndexManager;
 }());

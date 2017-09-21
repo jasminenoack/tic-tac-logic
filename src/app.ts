@@ -44,6 +44,3 @@ if (windowSearch) {
         updateAllSpots(board);
     }
 }
-
-// document.getElementById("puzzle-name").innerText = boardType;
-// gameUtils.setUp(board);
