@@ -70,9 +70,43 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var greeter_1 = __webpack_require__(1);
-var greeter = new greeter_1.Greeter("World");
-console.log(greeter.greet());
+var board_1 = __webpack_require__(2);
+var puzzles = __webpack_require__(1);
+var windowSearch = window.location.search;
+var element = document.getElementById("tic-tac-puzzle");
+function createBoard(board) {
+    element.className = "width-" + board.width;
+    for (var i = 0; i < board.width * board.height; i++) {
+        var subElement = document.createElement("div");
+        subElement.className = "spot";
+        element.appendChild(subElement);
+    }
+}
+function updateSpot(board, index) {
+    var spots = element.getElementsByClassName("spot");
+    if (spots && spots[index]) {
+        spots[index].innerText = board.value(index);
+    }
+}
+function updateAllSpots(board) {
+    for (var i = 0; i < board.width * board.height; i++) {
+        updateSpot(board, i);
+    }
+}
+if (windowSearch) {
+    var puzzleName = void 0;
+    if (windowSearch.split("p=").length > 1) {
+        puzzleName = windowSearch.split("p=")[1].split("&")[0];
+    }
+    if (puzzleName) {
+        var puzzleData = puzzles[puzzleName];
+        var board = new board_1.Board(puzzleData.width, puzzleData.height, puzzleData.xs, puzzleData.os);
+        createBoard(board);
+        updateAllSpots(board);
+    }
+}
+// document.getElementById("puzzle-name").innerText = boardType;
+// gameUtils.setUp(board);
 
 
 /***/ }),
@@ -82,16 +116,127 @@ console.log(greeter.greet());
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Greeter = /** @class */ (function () {
-    function Greeter(name) {
-        this.name = name;
+exports.simpleBoard1 = {
+    height: 6,
+    os: [
+        [1, 5],
+        [2, 3],
+        [3, 1],
+        [4, 4],
+        [5, 4],
+    ],
+    width: 6,
+    xs: [
+        [0, 1],
+        [0, 2],
+        [2, 0],
+        [4, 1],
+    ],
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var indexManager_1 = __webpack_require__(3);
+var spot_1 = __webpack_require__(4);
+var Board = /** @class */ (function () {
+    function Board(width, height, xs, os) {
+        this.width = width;
+        this.height = height;
+        var tempValues = [];
+        xs.forEach(function (location) {
+            var index = indexManager_1.IndexManager.findIndex(location[0], location[1], width);
+            tempValues[index] = "X";
+        });
+        os.forEach(function (location) {
+            var index = indexManager_1.IndexManager.findIndex(location[0], location[1], width);
+            tempValues[index] = "O";
+        });
+        this.spots = [];
+        for (var i = 0; i < width * height; i++) {
+            this.spots.push(new spot_1.Spot(tempValues[i]));
+        }
     }
-    Greeter.prototype.greet = function () {
-        console.log("Hello,", this.name);
+    Board.prototype.value = function (index) {
+        return this.spots[index].get();
     };
-    return Greeter;
+    return Board;
 }());
-exports.Greeter = Greeter;
+exports.Board = Board;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var IndexManager = /** @class */ (function () {
+    function IndexManager() {
+    }
+    IndexManager.getRowIndexes = function (row, width) {
+        var baseIndex = row * width;
+        var indexes = [];
+        for (var i = baseIndex; i < baseIndex + width; i++) {
+            indexes.push(i);
+        }
+        return indexes;
+    };
+    IndexManager.getColumnIndexes = function (column, width, height) {
+        var elementCount = width * height;
+        var indexes = [];
+        for (var i = column; i < elementCount; i += width) {
+            indexes.push(i);
+        }
+        return indexes;
+    };
+    IndexManager.findIndex = function (row, column, width) {
+        return row * width + column;
+    };
+    return IndexManager;
+}());
+exports.IndexManager = IndexManager;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Spot = /** @class */ (function () {
+    function Spot(value) {
+        if (value === void 0) { value = ""; }
+        this.isGiven = false;
+        this.set(value);
+        if (value) {
+            this.isGiven = true;
+        }
+    }
+    Spot.prototype.get = function () {
+        return this.value;
+    };
+    Spot.prototype.set = function (value) {
+        if (value !== "X" && value !== "O" && value !== "") {
+            throw new Error(("Invalid value"));
+        }
+        if (!this.given()) {
+            this.value = value;
+        }
+    };
+    Spot.prototype.given = function () {
+        return this.isGiven;
+    };
+    return Spot;
+}());
+exports.Spot = Spot;
 
 
 /***/ })
