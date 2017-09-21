@@ -18,4 +18,8 @@ export class IndexManager {
         }
         return indexes;
     }
+
+    public static findIndex(row: number, column: number, width: number): number {
+        return row * width + column;
+    }
 }
