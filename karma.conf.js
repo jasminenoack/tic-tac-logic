@@ -5,16 +5,18 @@ module.exports = function(config) {
         frameworks: ["jasmine"],
 
         files: [
-            'spec/greeter.test.ts',
+            'spec/**/*.ts',
+            {pattern: 'src/**/*.ts', included: false}
         ],
 
         preprocessors: {
             'spec/**/*.ts': ['webpack'],
+            'src/**/*.ts': ['webpack']
         },
 
         webpack: webpackConfig, 
 
-        reporters: ["progress"],
+        reporters: ["spec"],
 
         browsers: ["ChromeHeadless"],
 
