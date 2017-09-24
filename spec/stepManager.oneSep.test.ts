@@ -2,7 +2,7 @@ import { Board } from "../src/board";
 import { ComparisonManager } from "../src/comparisonManager";
 import { StepManager } from "../src/stepManager";
 
-describe("StepManager consecutive", () => {
+describe("StepManager one seperated", () => {
     let stepManager;
     let board;
     beforeEach(() => {
@@ -27,7 +27,7 @@ describe("StepManager consecutive", () => {
 
     describe("create", () => {
         it("has a state object", () => {
-            expect(stepManager.state.consecutivePairs).toEqual({
+            expect(stepManager.state.oneSep).toEqual({
                 checkEmpty: [],
                 columns: [],
                 currentPair: [],
@@ -42,26 +42,26 @@ describe("StepManager consecutive", () => {
     describe("set up", () => {
         it("sets up the new state for the board", () => {
             stepManager.setUp();
-            expect(stepManager.state.consecutivePairs).toEqual({
+            expect(stepManager.state.oneSep).toEqual({
                 checkEmpty: [],
                 columns: [
-                    [0, 6], [6, 12], [12, 18], [18, 24], [24, 30],
-                    [1, 7], [7, 13], [13, 19], [19, 25], [25, 31],
-                    [2, 8], [8, 14], [14, 20], [20, 26], [26, 32],
-                    [3, 9], [9, 15], [15, 21], [21, 27], [27, 33],
-                    [4, 10], [10, 16], [16, 22], [22, 28], [28, 34],
-                    [5, 11], [11, 17], [17, 23], [23, 29], [29, 35],
+                    [0, 12], [6, 18], [12, 24], [18, 30],
+                    [1, 13], [7, 19], [13, 25], [19, 31],
+                    [2, 14], [8, 20], [14, 26], [20, 32],
+                    [3, 15], [9, 21], [15, 27], [21, 33],
+                    [4, 16], [10, 22], [16, 28], [22, 34],
+                    [5, 17], [11, 23], [17, 29], [23, 35],
                 ],
                 currentPair: [],
                 currentType: "",
                 insertOpposite: [],
                 rows: [
-                    [0, 1], [1, 2], [2, 3], [3, 4], [4, 5],
-                    [6, 7], [7, 8], [8, 9], [9, 10], [10, 11],
-                    [12, 13], [13, 14], [14, 15], [15, 16], [16, 17],
-                    [18, 19], [19, 20], [20, 21], [21, 22], [22, 23],
-                    [24, 25], [25, 26], [26, 27], [27, 28], [28, 29],
-                    [30, 31], [31, 32], [32, 33], [33, 34], [34, 35],
+                    [0, 2], [1, 3], [2, 4], [3, 5],
+                    [6, 8], [7, 9], [8, 10], [9, 11],
+                    [12, 14], [13, 15], [14, 16], [15, 17],
+                    [18, 20], [19, 21], [20, 22], [21, 23],
+                    [24, 26], [25, 27], [26, 28], [27, 29],
+                    [30, 32], [31, 33], [32, 34], [33, 35],
                 ],
             });
             expect(stepManager.state.madeAChange).toEqual(false);
@@ -69,38 +69,37 @@ describe("StepManager consecutive", () => {
     });
 
     it("iterates over rows", () => {
-        stepManager.state.consecutivePairs.rows = [[0, 1], [1, 2]];
+        stepManager.state.oneSep.rows = [[0, 2], [1, 3]];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [0, 1],
+            currentPair: [0, 2],
             currentType: "row",
             insertOpposite: [],
-            rows: [[1, 2]],
-
+            rows: [[1, 3]],
         });
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
             currentPair: [],
             currentType: "",
             insertOpposite: [],
-            rows: [[1, 2]],
+            rows: [[1, 3]],
 
         });
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [1, 2],
+            currentPair: [1, 3],
             currentType: "row",
             insertOpposite: [],
             rows: [],
@@ -110,15 +109,15 @@ describe("StepManager consecutive", () => {
     });
 
     it("switches from rows to columns", () => {
-        stepManager.state.consecutivePairs.rows = [[0, 1]];
-        stepManager.state.consecutivePairs.columns = [[0, 6]];
+        stepManager.state.oneSep.rows = [[0, 2]];
+        stepManager.state.oneSep.columns = [[0, 12]];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[0, 6]],
-            currentPair: [0, 1],
+            columns: [[0, 12]],
+            currentPair: [0, 2],
             currentType: "row",
             insertOpposite: [],
             rows: [],
@@ -127,9 +126,9 @@ describe("StepManager consecutive", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[0, 6]],
+            columns: [[0, 12]],
             currentPair: [],
             currentType: "",
             insertOpposite: [],
@@ -139,10 +138,10 @@ describe("StepManager consecutive", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [0, 6],
+            currentPair: [0, 12],
             currentType: "column",
             insertOpposite: [],
             rows: [],
@@ -152,68 +151,63 @@ describe("StepManager consecutive", () => {
     });
 
     it("fills in from column", () => {
-        stepManager.state.consecutivePairs.columns = [[28, 34]];
+        stepManager.state.oneSep.columns = [[3, 15]];
         stepManager.state.madeAChange = false;
-
+        board.setSpot("O", 3);
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [28, 34],
+            currentPair: [3, 15],
             currentType: "column",
             insertOpposite: [],
             rows: [],
 
         });
         expect(stepManager.state.madeAChange).toEqual(false);
-
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [22],
+        expect(stepManager.state.oneSep).toEqual({
+            checkEmpty: [9],
             columns: [],
-            currentPair: [28, 34],
+            currentPair: [3, 15],
             currentType: "column",
             insertOpposite: [],
             rows: [],
-
         });
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [22],
+        expect(stepManager.state.oneSep).toEqual({
+            checkEmpty: [9],
             columns: [],
-            currentPair: [28, 34],
+            currentPair: [3, 15],
             currentType: "column",
-            insertOpposite: [22],
+            insertOpposite: [9],
             rows: [],
-
         });
         expect(stepManager.state.madeAChange).toEqual(false);
-
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
             currentPair: [],
             currentType: "",
             insertOpposite: [],
             rows: [],
-
         });
         expect(stepManager.state.madeAChange).toEqual(true);
-        expect(board.value(22)).toEqual("X");
+        expect(board.value(9)).toEqual("X");
     });
 
     it("iterates over columns", () => {
-        stepManager.state.consecutivePairs.columns = [[0, 6], [6, 12]];
+        stepManager.state.oneSep.columns = [[0, 12], [6, 18]];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[6, 12]],
-            currentPair: [0, 6],
+            columns: [[6, 18]],
+            currentPair: [0, 12],
             currentType: "column",
             insertOpposite: [],
             rows: [],
@@ -222,9 +216,9 @@ describe("StepManager consecutive", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[6, 12]],
+            columns: [[6, 18]],
             currentPair: [],
             currentType: "",
             insertOpposite: [],
@@ -234,10 +228,10 @@ describe("StepManager consecutive", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [6, 12],
+            currentPair: [6, 18],
             currentType: "column",
             insertOpposite: [],
             rows: [],
@@ -246,16 +240,15 @@ describe("StepManager consecutive", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
     });
 
-    it("fills in outer on row", () => {
-        expect(board.value(0)).toEqual("");
-        expect(board.value(3)).toEqual("");
-        stepManager.state.consecutivePairs.rows = [[1, 2]];
+    it("fills in row", () => {
+        board.setSpot("X", 4);
+        stepManager.state.oneSep.rows = [[2, 4]];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [1, 2],
+            currentPair: [2, 4],
             currentType: "row",
             insertOpposite: [],
             rows: [],
@@ -263,27 +256,27 @@ describe("StepManager consecutive", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [0, 3],
+        expect(stepManager.state.oneSep).toEqual({
+            checkEmpty: [3],
             columns: [],
-            currentPair: [1, 2],
+            currentPair: [2, 4],
             currentType: "row",
             insertOpposite: [],
             rows: [],
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [0, 3],
+        expect(stepManager.state.oneSep).toEqual({
+            checkEmpty: [3],
             columns: [],
-            currentPair: [1, 2],
+            currentPair: [2, 4],
             currentType: "row",
-            insertOpposite: [0, 3],
+            insertOpposite: [3],
             rows: [],
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
             currentPair: [],
@@ -292,18 +285,17 @@ describe("StepManager consecutive", () => {
             rows: [],
         });
         expect(stepManager.state.madeAChange).toEqual(true);
-        expect(board.value(0)).toEqual("O");
         expect(board.value(3)).toEqual("O");
     });
 
     it("knows to try again if a change has been made", () => {
         stepManager.setUp();
-        const rows = stepManager.state.consecutivePairs.rows;
-        const columns = stepManager.state.consecutivePairs.columns;
+        const rows = stepManager.state.oneSep.rows;
+        const columns = stepManager.state.oneSep.columns;
         const newStepManager = new StepManager(board);
         newStepManager.state.madeAChange = true;
         newStepManager.takeStep();
-        expect(newStepManager.state.consecutivePairs).toEqual({
+        expect(newStepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns,
             currentPair: [],
@@ -317,7 +309,7 @@ describe("StepManager consecutive", () => {
     it("knows to stop if no change has been made", () => {
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
             currentPair: [],
@@ -328,82 +320,35 @@ describe("StepManager consecutive", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
     });
 
-    it("manages no sides empty", () => {
-        board.setSpot("O", 0);
+    it("manages no empty", () => {
+        board.setSpot("O", 3);
+        board.setSpot("X", 9);
         // 1 and 2 == x already
-        board.setSpot("O", 3);
-        stepManager.setUp();
-        stepManager.state.consecutivePairs.rows = [[1, 2]];
-        stepManager.state.consecutivePairs.columns = [];
+        stepManager.state.oneSep.rows = [];
+        stepManager.state.oneSep.columns = [[3, 15]];
+        stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [1, 2],
-            currentType: "row",
+            currentPair: [3, 15],
+            currentType: "column",
             insertOpposite: [],
             rows: [],
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [0, 3],
+        expect(stepManager.state.oneSep).toEqual({
+            checkEmpty: [9],
             columns: [],
-            currentPair: [1, 2],
-            currentType: "row",
+            currentPair: [3, 15],
+            currentType: "column",
             insertOpposite: [],
             rows: [],
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [],
-            columns: [],
-            currentPair: [],
-            currentType: "",
-            insertOpposite: [],
-            rows: [],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-    });
-
-    it("manages only one side empty", () => {
-        board.setSpot("O", 3);
-        stepManager.setUp();
-        stepManager.state.consecutivePairs.rows = [[1, 2]];
-        stepManager.state.consecutivePairs.columns = [];
-        stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [],
-            columns: [],
-            currentPair: [1, 2],
-            currentType: "row",
-            insertOpposite: [],
-            rows: [],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-        stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [0, 3],
-            columns: [],
-            currentPair: [1, 2],
-            currentType: "row",
-            insertOpposite: [],
-            rows: [],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-        stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
-            checkEmpty: [0, 3],
-            columns: [],
-            currentPair: [1, 2],
-            currentType: "row",
-            insertOpposite: [0],
-            rows: [],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-        stepManager.takeStep();
-        expect(stepManager.state.consecutivePairs).toEqual({
+        expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
             currentPair: [],
@@ -411,15 +356,14 @@ describe("StepManager consecutive", () => {
             insertOpposite: [],
             rows: [],
         });
-        expect(stepManager.state.madeAChange).toEqual(true);
-        expect(board.value(0)).toEqual("O");
+        expect(stepManager.state.madeAChange).toEqual(false);
     });
 
     describe("flags", () => {
         it("knows the flags no step", () => {
-            stepManager.state.consecutivePairs.currentPair = [];
-            stepManager.state.consecutivePairs.checkEmpty = [];
-            stepManager.state.consecutivePairs.insertOpposite = [];
+            stepManager.state.oneSep.currentPair = [];
+            stepManager.state.oneSep.checkEmpty = [];
+            stepManager.state.oneSep.insertOpposite = [];
 
             expect(stepManager.flag(0)).toEqual(undefined);
             expect(stepManager.flag(1)).toEqual(undefined);
@@ -429,9 +373,9 @@ describe("StepManager consecutive", () => {
         });
 
         it("knows the flags when on current pair", () => {
-            stepManager.state.consecutivePairs.currentPair = [1, 2];
-            stepManager.state.consecutivePairs.checkEmpty = [];
-            stepManager.state.consecutivePairs.insertOpposite = [];
+            stepManager.state.oneSep.currentPair = [1, 2];
+            stepManager.state.oneSep.checkEmpty = [];
+            stepManager.state.oneSep.insertOpposite = [];
 
             expect(stepManager.flag(0)).toEqual(undefined);
             expect(stepManager.flag(1)).toEqual("current");
@@ -441,9 +385,9 @@ describe("StepManager consecutive", () => {
         });
 
         it("knows the flags when check empty", () => {
-            stepManager.state.consecutivePairs.currentPair = [1, 2];
-            stepManager.state.consecutivePairs.checkEmpty = [0, 3];
-            stepManager.state.consecutivePairs.insertOpposite = [];
+            stepManager.state.oneSep.currentPair = [1, 2];
+            stepManager.state.oneSep.checkEmpty = [0, 3];
+            stepManager.state.oneSep.insertOpposite = [];
 
             expect(stepManager.flag(0)).toEqual("compare");
             expect(stepManager.flag(1)).toEqual("current");
@@ -453,9 +397,9 @@ describe("StepManager consecutive", () => {
         });
 
         it("knows the flags on insert", () => {
-            stepManager.state.consecutivePairs.currentPair = [1, 2];
-            stepManager.state.consecutivePairs.checkEmpty = [0, 3];
-            stepManager.state.consecutivePairs.insertOpposite = [0];
+            stepManager.state.oneSep.currentPair = [1, 2];
+            stepManager.state.oneSep.checkEmpty = [0, 3];
+            stepManager.state.oneSep.insertOpposite = [0];
 
             expect(stepManager.flag(0)).toEqual("insert");
             expect(stepManager.flag(1)).toEqual("current");

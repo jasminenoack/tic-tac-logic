@@ -43,3 +43,8 @@ body {
     font-size: 20px;
     margin: auto;
 }
+
+#start {
+    margin: 10px auto;
+    display: block;
+}

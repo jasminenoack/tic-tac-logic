@@ -45,6 +45,32 @@ export class IndexManager {
         return results;
     }
 
+    public static getOneSepRowPairs(width: number, height: number) {
+        const results = [];
+        for (let i = 0; i < height; i++) {
+            const rowIndexes = this.getRowIndexes(i, width);
+            for (let j = 2; j < rowIndexes.length; j++) {
+                results.push([rowIndexes[j - 2], rowIndexes[j]]);
+            }
+        }
+        return results;
+    }
+
+    public static getOneSepColumnPairs(width: number, height: number) {
+        const results = [];
+        for (let i = 0; i < width; i++) {
+            const columnIndexes = this.getColumnIndexes(i, width, height);
+            for (let j = 2; j < columnIndexes.length; j++) {
+                results.push([columnIndexes[j - 2], columnIndexes[j]]);
+            }
+        }
+        return results;
+    }
+
+    public static getBetween(pair: number[], type: string) {
+        return [(pair[0] + pair[1]) / 2];
+    }
+
     public static getNeighbors(indexes: number[], type: string, width: number, height: number) {
         const firstProcessedIndex = indexes[0];
         const lastProcessedIndex = indexes[indexes.length - 1];

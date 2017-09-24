@@ -180,6 +180,69 @@ describe("IndexManager", () => {
         });
     });
 
+    describe("gets one sep row pairs", () => {
+        it("6 * 6", () => {
+            expect(IndexManager.getOneSepRowPairs(6, 6)).toEqual([
+                [0, 2], [1, 3], [2, 4], [3, 5],
+                [6, 8], [7, 9], [8, 10], [9, 11],
+                [12, 14], [13, 15], [14, 16], [15, 17],
+                [18, 20], [19, 21], [20, 22], [21, 23],
+                [24, 26], [25, 27], [26, 28], [27, 29],
+                [30, 32], [31, 33], [32, 34], [33, 35],
+            ]);
+        });
+
+        it("4 * 4", () => {
+            expect(IndexManager.getOneSepRowPairs(4, 4)).toEqual([
+                [0, 2], [1, 3],
+                [4, 6], [5, 7],
+                [8, 10], [9, 11],
+                [12, 14], [13, 15],
+            ]);
+        });
+
+        it("5 * 4", () => {
+            expect(IndexManager.getOneSepRowPairs(5, 4)).toEqual([
+                [0, 2], [1, 3], [2, 4],
+                [5, 7], [6, 8], [7, 9],
+                [10, 12], [11, 13], [12, 14],
+                [15, 17], [16, 18], [17, 19],
+            ]);
+        });
+    });
+
+    describe("gets the one sep column pairs", () => {
+        it("6 * 6", () => {
+            expect(IndexManager.getOneSepColumnPairs(6, 6)).toEqual([
+                [0, 12], [6, 18], [12, 24], [18, 30],
+                [1, 13], [7, 19], [13, 25], [19, 31],
+                [2, 14], [8, 20], [14, 26], [20, 32],
+                [3, 15], [9, 21], [15, 27], [21, 33],
+                [4, 16], [10, 22], [16, 28], [22, 34],
+                [5, 17], [11, 23], [17, 29], [23, 35],
+            ]);
+        });
+
+        it("4 * 4", () => {
+            expect(IndexManager.getOneSepColumnPairs(4, 4)).toEqual([
+                [0, 8], [4, 12],
+                [1, 9], [5, 13],
+                [2, 10], [6, 14],
+                [3, 11], [7, 15],
+            ]);
+        });
+
+        it("5 * 4", () => {
+            expect(IndexManager.getOneSepColumnPairs(5, 4)).toEqual([
+                [0, 10], [5, 15],
+                [1, 11], [6, 16],
+                [2, 12], [7, 17],
+                [3, 13], [8, 18],
+                [4, 14], [9, 19],
+            ]);
+        });
+    });
+
     describe("getNeighbors", () => {
         describe("for pairs in rows", () => {
             it("0", () => {
@@ -278,6 +341,103 @@ describe("IndexManager", () => {
                 expect(IndexManager.getNeighbors([17, 23], "column", 6, 6)).toEqual([11, 29]);
                 expect(IndexManager.getNeighbors([23, 29], "column", 6, 6)).toEqual([17, 35]);
                 expect(IndexManager.getNeighbors([29, 35], "column", 6, 6)).toEqual([23]);
+            });
+        });
+    });
+
+    describe("find between", () => {
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.getBetween([0, 2], "row")).toEqual([1]);
+                expect(IndexManager.getBetween([1, 3], "row")).toEqual([2]);
+                expect(IndexManager.getBetween([2, 4], "row")).toEqual([3]);
+                expect(IndexManager.getBetween([3, 5], "row")).toEqual([4]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.getBetween([6, 8], "row")).toEqual([7]);
+                expect(IndexManager.getBetween([7, 9], "row")).toEqual([8]);
+                expect(IndexManager.getBetween([8, 10], "row")).toEqual([9]);
+                expect(IndexManager.getBetween([9, 11], "row")).toEqual([10]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.getBetween([12, 14], "row")).toEqual([13]);
+                expect(IndexManager.getBetween([13, 15], "row")).toEqual([14]);
+                expect(IndexManager.getBetween([14, 16], "row")).toEqual([15]);
+                expect(IndexManager.getBetween([15, 17], "row")).toEqual([16]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.getBetween([18, 20], "row")).toEqual([19]);
+                expect(IndexManager.getBetween([19, 21], "row")).toEqual([20]);
+                expect(IndexManager.getBetween([20, 22], "row")).toEqual([21]);
+                expect(IndexManager.getBetween([21, 23], "row")).toEqual([22]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.getBetween([24, 26], "row")).toEqual([25]);
+                expect(IndexManager.getBetween([25, 27], "row")).toEqual([26]);
+                expect(IndexManager.getBetween([26, 28], "row")).toEqual([27]);
+                expect(IndexManager.getBetween([27, 29], "row")).toEqual([28]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.getBetween([30, 32], "row")).toEqual([31]);
+                expect(IndexManager.getBetween([31, 33], "row")).toEqual([32]);
+                expect(IndexManager.getBetween([32, 34], "row")).toEqual([33]);
+                expect(IndexManager.getBetween([33, 35], "row")).toEqual([34]);
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.getBetween([0, 12], "column")).toEqual([6]);
+                expect(IndexManager.getBetween([6, 18], "column")).toEqual([12]);
+                expect(IndexManager.getBetween([12, 24], "column")).toEqual([18]);
+                expect(IndexManager.getBetween([18, 30], "column")).toEqual([24]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.getBetween([1, 13], "column")).toEqual([7]);
+                expect(IndexManager.getBetween([7, 19], "column")).toEqual([13]);
+                expect(IndexManager.getBetween([13, 25], "column")).toEqual([19]);
+                expect(IndexManager.getBetween([19, 31], "column")).toEqual([25]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.getBetween([2, 14], "column")).toEqual([8]);
+                expect(IndexManager.getBetween([8, 20], "column")).toEqual([14]);
+                expect(IndexManager.getBetween([14, 26], "column")).toEqual([20]);
+                expect(IndexManager.getBetween([20, 32], "column")).toEqual([26]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.getBetween([3, 15], "column")).toEqual([9]);
+                expect(IndexManager.getBetween([9, 21], "column")).toEqual([15]);
+                expect(IndexManager.getBetween([15, 27], "column")).toEqual([21]);
+                expect(IndexManager.getBetween([21, 33], "column")).toEqual([27]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.getBetween([4, 16], "column")).toEqual([10]);
+                expect(IndexManager.getBetween([10, 22], "column")).toEqual([16]);
+                expect(IndexManager.getBetween([16, 28], "column")).toEqual([22]);
+                expect(IndexManager.getBetween([22, 34], "column")).toEqual([28]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.getBetween([5, 17], "column")).toEqual([11]);
+                expect(IndexManager.getBetween([11, 23], "column")).toEqual([17]);
+                expect(IndexManager.getBetween([17, 29], "column")).toEqual([23]);
+                expect(IndexManager.getBetween([23, 35], "column")).toEqual([29]);
+            });
+
+            it("5*5 0", () => {
+                expect(IndexManager.getBetween([0, 10], "column")).toEqual([5]);
+                expect(IndexManager.getBetween([5, 15], "column")).toEqual([10]);
+                expect(IndexManager.getBetween([10, 20], "column")).toEqual([15]);
+                expect(IndexManager.getBetween([15, 25], "column")).toEqual([20]);
             });
         });
     });

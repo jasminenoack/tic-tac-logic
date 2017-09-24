@@ -5,6 +5,7 @@ import { StepManager } from "./stepManager";
 const windowSearch = window.location.search;
 const boardElement = document.getElementById("tic-tac-puzzle");
 const stepElement = document.getElementById("step-text");
+const start = document.getElementById("start");
 
 function createBoard(board) {
     boardElement.className = `width-${board.width}`;
@@ -56,14 +57,16 @@ if (windowSearch) {
         updateAllSpots(board, manager);
         updateStep(manager);
 
-        const interval = setInterval(() => {
-            manager.takeStep();
-            updateAllSpots(board, manager);
-            updateStep(manager);
+        start.addEventListener("click", () => {
+            const interval = setInterval(() => {
+                manager.takeStep();
+                updateAllSpots(board, manager);
+                updateStep(manager);
 
-            if (manager.done()) {
-                clearInterval(interval);
-            }
-        }, 100);
+                if (manager.done()) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        });
     }
 }

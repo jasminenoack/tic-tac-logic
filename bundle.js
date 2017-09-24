@@ -76,6 +76,7 @@ var stepManager_1 = __webpack_require__(5);
 var windowSearch = window.location.search;
 var boardElement = document.getElementById("tic-tac-puzzle");
 var stepElement = document.getElementById("step-text");
+var start = document.getElementById("start");
 function createBoard(board) {
     boardElement.className = "width-" + board.width;
     for (var i = 0; i < board.width * board.height; i++) {
@@ -115,14 +116,16 @@ if (windowSearch) {
         createBoard(board_2);
         updateAllSpots(board_2, manager_1);
         updateStep(manager_1);
-        var interval_1 = setInterval(function () {
-            manager_1.takeStep();
-            updateAllSpots(board_2, manager_1);
-            updateStep(manager_1);
-            if (manager_1.done()) {
-                clearInterval(interval_1);
-            }
-        }, 100);
+        start.addEventListener("click", function () {
+            var interval = setInterval(function () {
+                manager_1.takeStep();
+                updateAllSpots(board_2, manager_1);
+                updateStep(manager_1);
+                if (manager_1.done()) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        });
     }
 }
 
@@ -242,6 +245,29 @@ var IndexManager = /** @class */ (function () {
         }
         return results;
     };
+    IndexManager.getOneSepRowPairs = function (width, height) {
+        var results = [];
+        for (var i = 0; i < height; i++) {
+            var rowIndexes = this.getRowIndexes(i, width);
+            for (var j = 2; j < rowIndexes.length; j++) {
+                results.push([rowIndexes[j - 2], rowIndexes[j]]);
+            }
+        }
+        return results;
+    };
+    IndexManager.getOneSepColumnPairs = function (width, height) {
+        var results = [];
+        for (var i = 0; i < width; i++) {
+            var columnIndexes = this.getColumnIndexes(i, width, height);
+            for (var j = 2; j < columnIndexes.length; j++) {
+                results.push([columnIndexes[j - 2], columnIndexes[j]]);
+            }
+        }
+        return results;
+    };
+    IndexManager.getBetween = function (pair, type) {
+        return [(pair[0] + pair[1]) / 2];
+    };
     IndexManager.getNeighbors = function (indexes, type, width, height) {
         var firstProcessedIndex = indexes[0];
         var lastProcessedIndex = indexes[indexes.length - 1];
@@ -319,6 +345,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var comparisonManager_1 = __webpack_require__(6);
 var indexManager_1 = __webpack_require__(3);
 var consecutivePairs = "consecutivePairs";
+var oneSep = "oneSep";
 var flags = {
     active: "current",
     compare: "compare",
@@ -340,37 +367,45 @@ var StepManager = /** @class */ (function () {
                 rows: [],
             },
             madeAChange: true,
+            oneSep: {
+                checkEmpty: [],
+                columns: [],
+                currentPair: [],
+                currentType: "",
+                insertOpposite: [],
+                rows: [],
+            },
         };
     };
     StepManager.prototype.setUp = function () {
         this.resetState();
         this.state.consecutivePairs.rows = indexManager_1.IndexManager.getConsecutiveRowPairs(this.board.width, this.board.height);
         this.state.consecutivePairs.columns = indexManager_1.IndexManager.getConsecutiveColumnPairs(this.board.width, this.board.height);
+        this.state.oneSep.rows = indexManager_1.IndexManager.getOneSepRowPairs(this.board.width, this.board.height);
+        this.state.oneSep.columns = indexManager_1.IndexManager.getOneSepColumnPairs(this.board.width, this.board.height);
         this.state.madeAChange = false;
     };
     StepManager.prototype.flag = function (index) {
         switch (this.currentStep()) {
             case consecutivePairs:
-                var consecData = this.state.consecutivePairs;
-                if (consecData.insertOpposite.indexOf(index) !== -1) {
-                    return flags.insert;
-                }
-                else if (consecData.checkEmpty.indexOf(index) !== -1) {
-                    return flags.compare;
-                }
-                else if (consecData.currentPair.indexOf(index) !== -1) {
-                    return flags.active;
-                }
-                break;
+                return this.getFlagFromCompareData(this.state.consecutivePairs, index);
+            case oneSep:
+                return this.getFlagFromCompareData(this.state.oneSep, index);
         }
     };
     StepManager.prototype.currentStep = function () {
-        if (this.state.consecutivePairs.rows.length ||
-            this.state.consecutivePairs.columns.length ||
-            this.state.consecutivePairs.currentType ||
-            this.state.consecutivePairs.currentPair.length) {
+        if (this.checkCompareStep(this.state.consecutivePairs)) {
             return consecutivePairs;
         }
+        else if (this.checkCompareStep(this.state.oneSep)) {
+            return oneSep;
+        }
+    };
+    StepManager.prototype.checkCompareStep = function (data) {
+        return data.rows.length ||
+            data.columns.length ||
+            data.currentType ||
+            data.currentPair.length;
     };
     StepManager.prototype.done = function () {
         return !(this.currentStep() || this.state.madeAChange);
@@ -380,6 +415,9 @@ var StepManager = /** @class */ (function () {
             case consecutivePairs:
                 // tslint:disable-next-line:max-line-length
                 return "For this step we are looking for consecutive squares that have the same value. If we find them we check if the squares on either side are empty. If they are empty then we can insert the opposite symbol into those squares";
+            case oneSep:
+                // tslint:disable-next-line:max-line-length
+                return "For this step we are looking at places where a square is equal to the square 2 away from it. If these are equal the item between must be the opposite or there would be 3 in a row.";
         }
     };
     StepManager.prototype.takeStep = function () {
@@ -387,59 +425,100 @@ var StepManager = /** @class */ (function () {
             case consecutivePairs:
                 this.takeConsecutivePairsStep();
                 break;
+            case oneSep:
+                this.takeOneSepStep();
+                break;
             default:
                 if (this.state.madeAChange) {
                     this.setUp();
                 }
         }
     };
-    StepManager.prototype.resetConsecutivePairs = function () {
-        this.state.consecutivePairs.currentType = "";
-        this.state.consecutivePairs.currentPair = [];
-        this.state.consecutivePairs.insertOpposite = [];
-        this.state.consecutivePairs.checkEmpty = [];
+    StepManager.prototype.resetComparison = function (data) {
+        data.currentType = "";
+        data.currentPair = [];
+        data.insertOpposite = [];
+        data.checkEmpty = [];
+    };
+    StepManager.prototype.getFlagFromCompareData = function (data, index) {
+        if (data.insertOpposite.indexOf(index) !== -1) {
+            return flags.insert;
+        }
+        else if (data.checkEmpty.indexOf(index) !== -1) {
+            return flags.compare;
+        }
+        else if (data.currentPair.indexOf(index) !== -1) {
+            return flags.active;
+        }
     };
     StepManager.prototype.takeConsecutivePairsStep = function () {
         if (this.state.consecutivePairs.currentPair.length) {
             this.handleCurrentConsecutivePair();
         }
-        else if (this.state.consecutivePairs.rows.length) {
-            this.state.consecutivePairs.currentPair = this.state.consecutivePairs.rows.shift();
-            this.state.consecutivePairs.currentType = "row";
-        }
-        else if (this.state.consecutivePairs.columns.length) {
-            this.state.consecutivePairs.currentPair = this.state.consecutivePairs.columns.shift();
-            this.state.consecutivePairs.currentType = "column";
+        else {
+            this.setNext(this.state.consecutivePairs);
         }
     };
+    StepManager.prototype.takeOneSepStep = function () {
+        if (this.state.oneSep.currentPair.length) {
+            this.handleOneSepPair();
+        }
+        else {
+            this.setNext(this.state.oneSep);
+        }
+    };
+    StepManager.prototype.setNext = function (data) {
+        if (data.rows.length) {
+            data.currentPair = data.rows.shift();
+            data.currentType = "row";
+        }
+        else if (data.columns.length) {
+            data.currentPair = data.columns.shift();
+            data.currentType = "column";
+        }
+    };
+    StepManager.prototype.handleOneSepPair = function () {
+        this.handleCompareStep(this.state.oneSep);
+    };
     StepManager.prototype.handleCurrentConsecutivePair = function () {
+        this.handleCompareStep(this.state.consecutivePairs);
+    };
+    StepManager.prototype.findNodesToCompare = function (pair, data) {
+        switch (this.currentStep()) {
+            case consecutivePairs:
+                return indexManager_1.IndexManager.getNeighbors(pair, data.currentType, this.board.width, this.board.height);
+            case oneSep:
+                return indexManager_1.IndexManager.getBetween(pair, data.currentType);
+        }
+    };
+    StepManager.prototype.handleCompareStep = function (data) {
         var _this = this;
-        var pair = this.state.consecutivePairs.currentPair;
+        var pair = data.currentPair;
         var spots = this.board.spots;
-        if (this.state.consecutivePairs.insertOpposite.length) {
+        if (data.insertOpposite.length) {
             var value_1 = this.board.value(pair[0]) === "O" ? "X" : "O";
-            this.state.consecutivePairs.insertOpposite.forEach(function (index) {
+            data.insertOpposite.forEach(function (index) {
                 _this.board.setSpot(value_1, index);
             });
-            this.resetConsecutivePairs();
+            this.resetComparison(data);
             this.state.madeAChange = true;
         }
-        else if (this.state.consecutivePairs.checkEmpty.length) {
-            var empty = this.state.consecutivePairs.checkEmpty;
+        else if (data.checkEmpty.length) {
+            var empty = data.checkEmpty;
             empty.forEach(function (index) {
                 if (!_this.board.value(index)) {
-                    _this.state.consecutivePairs.insertOpposite.push(index);
+                    data.insertOpposite.push(index);
                 }
             });
-            if (!this.state.consecutivePairs.insertOpposite.length) {
-                this.resetConsecutivePairs();
+            if (!data.insertOpposite.length) {
+                this.resetComparison(data);
             }
         }
         else if (comparisonManager_1.ComparisonManager.compareTwo(spots[pair[0]], spots[pair[1]])) {
-            this.state.consecutivePairs.checkEmpty = indexManager_1.IndexManager.getNeighbors(pair, this.state.consecutivePairs.currentType, this.board.width, this.board.height);
+            data.checkEmpty = this.findNodesToCompare(pair, data);
         }
         else {
-            this.resetConsecutivePairs();
+            this.resetComparison(data);
         }
     };
     return StepManager;
