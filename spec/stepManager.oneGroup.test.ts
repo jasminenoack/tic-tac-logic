@@ -36,7 +36,7 @@ describe("StepManager group", () => {
                 count: {},
                 currentIndex: null,
                 currentType: "",
-                insertValue: [],
+                insertInto: [],
                 mainValue: "",
                 neighbors: [],
                 rows: [],
@@ -54,7 +54,7 @@ describe("StepManager group", () => {
                 count: {},
                 currentIndex: null,
                 currentType: "",
-                insertValue: [],
+                insertInto: [],
                 mainValue: "",
                 neighbors: [],
                 rows: [0, 1, 2, 3, 4, 5],
@@ -75,7 +75,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 0,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [1],
@@ -89,7 +89,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [1],
@@ -103,7 +103,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 1,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -121,7 +121,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 0,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [1],
@@ -136,7 +136,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 0,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [1],
@@ -151,7 +151,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [1],
@@ -170,7 +170,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 1,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [2],
@@ -184,7 +184,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 1,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [2],
@@ -198,7 +198,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [2],
@@ -216,7 +216,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 3,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -229,7 +229,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 3,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -244,7 +244,7 @@ describe("StepManager group", () => {
             count: { o: 1, x: 2 },
             currentIndex: 3,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "X",
             neighbors: [15],
             rows: [],
@@ -259,7 +259,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -279,7 +279,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 5,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -292,7 +292,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 5,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -305,7 +305,7 @@ describe("StepManager group", () => {
             count: { x: 3, o: 1 },
             currentIndex: 5,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "X",
             neighbors: [11],
             rows: [],
@@ -318,7 +318,7 @@ describe("StepManager group", () => {
             count: { x: 3, o: 1 },
             currentIndex: 5,
             currentType: "column",
-            insertValue: [17, 35],
+            insertInto: [17, 35],
             mainValue: "X",
             neighbors: [11],
             rows: [],
@@ -331,7 +331,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -352,7 +352,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 4,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -365,7 +365,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 4,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -378,7 +378,7 @@ describe("StepManager group", () => {
             count: { x: 2, o: 1 },
             currentIndex: 4,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "X",
             neighbors: [22],
             rows: [],
@@ -391,7 +391,7 @@ describe("StepManager group", () => {
             count: { x: 2, o: 1 },
             currentIndex: 4,
             currentType: "column",
-            insertValue: [4],
+            insertInto: [4],
             mainValue: "X",
             neighbors: [22],
             rows: [],
@@ -404,7 +404,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -426,7 +426,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 5,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -439,7 +439,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 5,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -452,7 +452,7 @@ describe("StepManager group", () => {
             count: { x: 2, o: 1 },
             currentIndex: 5,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "X",
             neighbors: [17],
             rows: [],
@@ -465,7 +465,7 @@ describe("StepManager group", () => {
             count: { x: 2, o: 1 },
             currentIndex: 5,
             currentType: "column",
-            insertValue: [35],
+            insertInto: [35],
             mainValue: "X",
             neighbors: [17],
             rows: [],
@@ -478,7 +478,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -498,7 +498,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 0,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -511,7 +511,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 0,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -524,7 +524,7 @@ describe("StepManager group", () => {
             count: { o: 1, x: 0 },
             currentIndex: 0,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "O",
             neighbors: [3, 5],
             rows: [],
@@ -537,7 +537,7 @@ describe("StepManager group", () => {
             count: { o: 1, x: 0 },
             currentIndex: 0,
             currentType: "row",
-            insertValue: [4],
+            insertInto: [4],
             mainValue: "O",
             neighbors: [3, 5],
             rows: [],
@@ -550,7 +550,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -571,7 +571,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 5,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -584,7 +584,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 5,
             currentType: "row",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -597,7 +597,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -610,7 +610,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: 3,
             currentType: "column",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -631,7 +631,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [0, 1, 2, 3, 4, 5],
@@ -648,7 +648,7 @@ describe("StepManager group", () => {
             count: {},
             currentIndex: null,
             currentType: "",
-            insertValue: [],
+            insertInto: [],
             mainValue: "",
             neighbors: [],
             rows: [],
@@ -662,7 +662,7 @@ describe("StepManager group", () => {
             stepManager.state.oneGroup.blanks = [];
             stepManager.state.oneGroup.currentType = "";
             stepManager.state.oneGroup.neighbors = [];
-            stepManager.state.oneGroup.insertValue = [];
+            stepManager.state.oneGroup.insertInto = [];
 
             expect(stepManager.flag(0)).toEqual(undefined);
             expect(stepManager.flag(1)).toEqual(undefined);
@@ -677,7 +677,7 @@ describe("StepManager group", () => {
             stepManager.state.oneGroup.blanks = [];
             stepManager.state.oneGroup.currentType = "row";
             stepManager.state.oneGroup.neighbors = [];
-            stepManager.state.oneGroup.insertValue = [];
+            stepManager.state.oneGroup.insertInto = [];
 
             expect(stepManager.flag(0)).toEqual("current");
             expect(stepManager.flag(1)).toEqual("current");
@@ -692,7 +692,7 @@ describe("StepManager group", () => {
             stepManager.state.oneGroup.blanks = [1, 2, 3];
             stepManager.state.oneGroup.currentType = "row";
             stepManager.state.oneGroup.neighbors = [];
-            stepManager.state.oneGroup.insertValue = [];
+            stepManager.state.oneGroup.insertInto = [];
 
             expect(stepManager.flag(0)).toEqual(undefined);
             expect(stepManager.flag(1)).toEqual("current");
@@ -707,7 +707,7 @@ describe("StepManager group", () => {
             stepManager.state.oneGroup.blanks = [1, 2, 3];
             stepManager.state.oneGroup.currentType = "row";
             stepManager.state.oneGroup.neighbors = [0, 4];
-            stepManager.state.oneGroup.insertValue = [];
+            stepManager.state.oneGroup.insertInto = [];
 
             expect(stepManager.flag(0)).toEqual("compare");
             expect(stepManager.flag(1)).toEqual("current");
@@ -722,7 +722,7 @@ describe("StepManager group", () => {
             stepManager.state.oneGroup.blanks = [1, 2, 3];
             stepManager.state.oneGroup.currentType = "row";
             stepManager.state.oneGroup.neighbors = [0, 4];
-            stepManager.state.oneGroup.insertValue = [0];
+            stepManager.state.oneGroup.insertInto = [0];
 
             expect(stepManager.flag(0)).toEqual("insert");
             expect(stepManager.flag(1)).toEqual("current");

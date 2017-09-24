@@ -17,14 +17,13 @@ interface IOneGroup {
     count: { [key: string]: number };
     currentIndex: number | null;
     currentType: string;
-    insertValue: number[];
+    insertInto: number[];
     mainValue: string;
     neighbors: number[];
     rows: number[];
 }
 
 interface IMultiGroup {
-    blanks: number[];
     columns: number[];
     groups: number[][];
     higherCount: number;
@@ -75,7 +74,6 @@ export class StepManager {
             },
             madeAChange: true,
             multiGroup: {
-                blanks: [],
                 columns: [],
                 currentIndex: null,
                 currentType: "",
@@ -93,7 +91,7 @@ export class StepManager {
                 count: {},
                 currentIndex: null,
                 currentType: "",
-                insertValue: [],
+                insertInto: [],
                 mainValue: "",
                 neighbors: [],
                 rows: [],
@@ -153,6 +151,8 @@ export class StepManager {
                 return this.getFlagFromCompareData(this.state.oneSep, index);
             case oneGroup:
                 return this.getFlagFromGroupData(this.state.oneGroup, index);
+            case multiGroup:
+                return this.getFlagFromGroupData(this.state.multiGroup, index);
         }
     }
 
@@ -204,6 +204,9 @@ export class StepManager {
             case oneGroup:
                 // tslint:disable-next-line:max-line-length
                 return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
+            case multiGroup:
+                // tslint:disable-next-line:max-line-length
+                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number.";
         }
     }
 
@@ -220,6 +223,7 @@ export class StepManager {
                 break;
             case multiGroup:
                 this.takeMultiGroupStep();
+                break;
             default:
                 if (this.state.madeAChange) {
                     this.setUp();
@@ -256,11 +260,8 @@ export class StepManager {
     }
 
     public processCurrentOneGroup(data) {
-        if (data.insertValue.length) {
-            data.insertValue.forEach((index) => {
-                this.board.setSpot(data.mainValue, index);
-            });
-            this.state.madeAChange = true;
+        if (data.insertInto.length) {
+            this.insert(data.insertInto, data.mainValue);
             this.resetOneGroup();
         } else if (Object.keys(data.count).length) {
             this.groupDetermineInsert(data);
@@ -271,11 +272,48 @@ export class StepManager {
         }
     }
 
-    public processMultiGroup(data) {
-        if (false) {
+    public insert(indexes, value) {
+        let changed = false;
+        indexes.forEach((index) => {
+            if (!this.board.value(index)) {
+                this.board.setSpot(value, index);
+                changed = true;
+            }
+        });
+        if (changed) {
+            this.state.madeAChange = true;
+        }
+    }
 
+    public processMultiGroup(data) {
+        if (data.insertInto.length) {
+            this.insert(data.insertInto, data.higherValue);
+            this.resetMultiGroup(data);
+        } else if (data.groups.length) {
+            this.checkForInsertsMultiGroup(data);
         } else {
             this.multiGroupGetBlanks(data);
+        }
+    }
+
+    public checkForInsertsMultiGroup(data) {
+        let countGroupsHigher3 = 0;
+        data.groups.forEach((group) => {
+            if (group.length > 2) {
+                countGroupsHigher3++;
+            }
+        });
+        if (countGroupsHigher3 === data.lowerCount) {
+            data.groups.forEach((group) => {
+                if (group.length <= 2) {
+                    data.insertInto = data.insertInto.concat(group);
+                }
+            });
+            if (!data.insertInto.length) {
+                this.resetMultiGroup(data);
+            }
+        } else {
+            this.resetMultiGroup(data);
         }
     }
 
@@ -284,12 +322,12 @@ export class StepManager {
         if (
             leftOver.o === 0 || leftOver.x === 0
         ) {
-            data.insertValue = data.blanks;
+            data.insertInto = data.blanks;
         } else if (
             leftOver.o === 1 && leftOver.x > 2
             || leftOver.x === 1 && leftOver.o > 2
         ) {
-            data.insertValue = [data.blanks[0], data.blanks[data.blanks.length - 1]];
+            data.insertInto = [data.blanks[0], data.blanks[data.blanks.length - 1]];
         } else if (
             (
                 data.neighbors[0] && this.board.value(data.neighbors[0]) === data.mainValue
@@ -300,9 +338,9 @@ export class StepManager {
             data.neighbors.forEach((neighbor) => {
                 if (this.board.value(neighbor) === data.mainValue) {
                     if (neighbor < data.blanks[0]) {
-                        data.insertValue.push(data.blanks[data.blanks.length - 1]);
+                        data.insertInto.push(data.blanks[data.blanks.length - 1]);
                     } else {
-                        data.insertValue.push(data.blanks[0]);
+                        data.insertInto.push(data.blanks[0]);
                     }
                 }
             });
@@ -342,16 +380,27 @@ export class StepManager {
     }
 
     public multiGroupGetBlanks(data) {
-        const blanks = IndexManager.getBlanks(this.board, data.currentType, data.currentIndex);
+        const blanks = IndexManager.blankGroups(this.board, data.currentType, data.currentIndex);
         if (blanks.length) {
-            data.blanks = blanks;
+            data.groups = blanks;
+            const leftOver = IndexManager.leftOver(this.board, data.currentType, data.currentIndex);
+            if (leftOver.o > leftOver.x) {
+                data.higherValue = "O";
+                data.higherCount = leftOver.o;
+                data.lowerValue = "X";
+                data.lowerCount = leftOver.x;
+            } else {
+                data.higherValue = "X";
+                data.higherCount = leftOver.x;
+                data.lowerValue = "O";
+                data.lowerCount = leftOver.o;
+            }
         } else {
             this.resetMultiGroup(data);
         }
     }
 
     public resetMultiGroup(data) {
-        data.blanks = [];
         data.currentIndex = null;
         data.currentType = "";
         data.groups = [];
@@ -386,7 +435,7 @@ export class StepManager {
         data.currentType = "";
         data.neighbors = [];
         data.mainValue = "";
-        data.insertValue = [];
+        data.insertInto = [];
     }
 
     private getFlagFromCompareData(data, index) {
@@ -400,14 +449,23 @@ export class StepManager {
     }
 
     private getFlagFromGroupData(data, index) {
-        if (data.insertValue.indexOf(index) !== -1) {
+        let blanks = data.blanks || [];
+        if (!blanks.length && data.groups && data.groups.length) {
+            data.groups.forEach((group) => {
+                blanks = blanks.concat(group);
+            });
+        }
+
+        if (data.insertInto.indexOf(index) !== -1) {
             return flags.insert;
-        } else if (data.neighbors.indexOf(index) !== -1) {
+        } else if (
+            data.neighbors && data.neighbors.indexOf(index) !== -1
+        ) {
             return flags.compare;
         } else if (
-            data.blanks.indexOf(index) !== -1 ||
+            blanks.indexOf(index) !== -1 ||
             (
-                !data.blanks.length && data.currentType &&
+                !blanks.length && data.currentType &&
                 IndexManager.getSectionIndexes(
                     data.currentType, data.currentIndex, this.board.width, this.board.height,
                 ).indexOf(index) !== -1
@@ -465,11 +523,8 @@ export class StepManager {
         const spots = this.board.spots;
         if (data.insertOpposite.length) {
             const value = this.board.value(pair[0]) === "O" ? "X" : "O";
-            data.insertOpposite.forEach((index) => {
-                this.board.setSpot(value, index);
-            });
+            this.insert(data.insertOpposite, value);
             this.resetComparison(data);
-            this.state.madeAChange = true;
         } else if (data.checkEmpty.length) {
             const empty = data.checkEmpty;
             empty.forEach((index) => {
