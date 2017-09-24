@@ -353,7 +353,7 @@ Object.keys(puzzles).forEach(function (name) {
         var link = document.createElement("a");
         linkWrapper.appendChild(link);
         link.innerText = name;
-        link.href = "//?p=" + name;
+        link.href = "/?p=" + name;
         links.appendChild(linkWrapper);
     }
 });
@@ -497,6 +497,24 @@ exports.easy1 = {
         [4, 2],
     ],
 };
+exports.easy2 = {
+    height: 6,
+    os: [
+        [1, 1],
+        [1, 2],
+        [2, 0],
+    ],
+    width: 6,
+    xs: [
+        [0, 3],
+        [2, 5],
+        [4, 1],
+        [4, 3],
+        [4, 5],
+        [5, 0],
+        [5, 5],
+    ],
+};
 
 
 /***/ }),
@@ -636,16 +654,16 @@ var StepManager = /** @class */ (function () {
         switch (this.currentStep()) {
             case consecutivePairs:
                 // tslint:disable-next-line:max-line-length
-                return "For this step we are looking for consecutive squares that have the same value. If we find them we check if the squares on either side are empty. If they are empty then we can insert the opposite symbol into those squares";
+                return "If squares next to each other both have the same value the squares on either side should be the opposite value.";
             case oneSep:
                 // tslint:disable-next-line:max-line-length
-                return "For this step we are looking at places where a square is equal to the square 2 away from it. If these are equal the item between must be the opposite or there would be 3 in a row.";
+                return "If two squares with one square between them have the same value the square between them should be the opposite value";
             case oneGroup:
                 // tslint:disable-next-line:max-line-length
-                return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
+                return "If there is only one value left in a row, it should be filled in. If there is a group of blanks where 3 of the same value and one of the other value need to be placed. The value there is 3 of goes on the outsides.";
             case multiGroup:
                 // tslint:disable-next-line:max-line-length
-                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number. We also find 2 blanks in a row where one of the neighbors matches the value with more instances.";
+                return "If in a series of groups some require a value. If the number of times the value is required is equal to the number to place any other groups are the other value.";
         }
     };
     StepManager.prototype.takeStep = function () {
@@ -1046,7 +1064,7 @@ exports = module.exports = __webpack_require__(10)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px auto;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n    #tic-tac-puzzle.width-6 .row-counts {\n      height: 488px; }\n    #tic-tac-puzzle.width-6 .column-counts {\n      width: 488px; }\n\n#step-text {\n  width: 700px;\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  margin: 10px auto;\n  display: block; }\n", ""]);
+exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 200px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px auto;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n    #tic-tac-puzzle.width-6 .row-counts {\n      height: 488px; }\n    #tic-tac-puzzle.width-6 .column-counts {\n      width: 488px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  margin-bottom: 20px; }\n", ""]);
 
 // exports
 

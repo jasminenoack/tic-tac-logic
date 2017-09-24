@@ -203,16 +203,16 @@ export class StepManager {
         switch (this.currentStep()) {
             case consecutivePairs:
                 // tslint:disable-next-line:max-line-length
-                return "For this step we are looking for consecutive squares that have the same value. If we find them we check if the squares on either side are empty. If they are empty then we can insert the opposite symbol into those squares";
+                return "If squares next to each other both have the same value the squares on either side should be the opposite value.";
             case oneSep:
                 // tslint:disable-next-line:max-line-length
-                return "For this step we are looking at places where a square is equal to the square 2 away from it. If these are equal the item between must be the opposite or there would be 3 in a row.";
+                return "If two squares with one square between them have the same value the square between them should be the opposite value";
             case oneGroup:
                 // tslint:disable-next-line:max-line-length
-                return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
+                return "If there is only one value left in a row, it should be filled in. If there is a group of blanks where 3 of the same value and one of the other value need to be placed. The value there is 3 of goes on the outsides.";
             case multiGroup:
                 // tslint:disable-next-line:max-line-length
-                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number. We also find 2 blanks in a row where one of the neighbors matches the value with more instances.";
+                return "If in a series of groups some require a value. If the number of times the value is required is equal to the number to place any other groups are the other value.";
         }
     }
 

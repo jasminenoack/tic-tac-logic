@@ -11,6 +11,16 @@ body {
     background: aliceblue;
     text-align: center;
 }
+
+#puzzle-data {
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    text-align: right;
+    width: 200px;
+}
+
 #tic-tac-puzzle {
     // border: $border-addition solid black;
     box-sizing: border-box;
@@ -159,12 +169,13 @@ body {
 
 
 #step-text {
-    width: 700px;
     font-size: 20px;
     margin: auto;
 }
 
 #start {
-    margin: 10px auto;
-    display: block;
+    display: inline-block;
+}
+#links {
+    margin-bottom: 20px;
 }
