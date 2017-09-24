@@ -23,4 +23,10 @@ export class Board {
     public value(index): string {
         return this.spots[index].get();
     }
+
+    public setSpot(value: string, index: number) {
+        if (this.spots[index]) {
+            this.spots[index].set(value);
+        }
+    }
 }

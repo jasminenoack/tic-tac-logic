@@ -166,6 +166,11 @@ var Board = /** @class */ (function () {
     Board.prototype.value = function (index) {
         return this.spots[index].get();
     };
+    Board.prototype.setSpot = function (value, index) {
+        if (this.spots[index]) {
+            this.spots[index].set(value);
+        }
+    };
     return Board;
 }());
 exports.Board = Board;
@@ -296,6 +301,12 @@ exports.Spot = Spot;
 Object.defineProperty(exports, "__esModule", { value: true });
 var comparisonManager_1 = __webpack_require__(6);
 var indexManager_1 = __webpack_require__(3);
+var consecutivePairs = "consecutivePairs";
+var flags = {
+    active: "current",
+    compare: "compare",
+    insert: "insert",
+};
 var StepManager = /** @class */ (function () {
     function StepManager(board) {
         this.board = board;
@@ -320,18 +331,39 @@ var StepManager = /** @class */ (function () {
         this.state.consecutivePairs.columns = indexManager_1.IndexManager.getConsecutiveColumnPairs(this.board.width, this.board.height);
         this.state.madeAChange = false;
     };
+    StepManager.prototype.flag = function (index) {
+        switch (this.currentStep()) {
+            case consecutivePairs:
+                var consecData = this.state.consecutivePairs;
+                if (consecData.insertOpposite.indexOf(index) !== -1) {
+                    return flags.insert;
+                }
+                else if (consecData.checkEmpty.indexOf(index) !== -1) {
+                    return flags.compare;
+                }
+                else if (consecData.currentPair.indexOf(index) !== -1) {
+                    return flags.active;
+                }
+                break;
+        }
+    };
     StepManager.prototype.currentStep = function () {
         if (this.state.consecutivePairs.rows.length ||
             this.state.consecutivePairs.columns.length ||
-            this.state.consecutivePairs.currentType) {
-            return "consecutivePairs";
+            this.state.consecutivePairs.currentType ||
+            this.state.consecutivePairs.currentPair.length) {
+            return consecutivePairs;
         }
     };
     StepManager.prototype.takeStep = function () {
         switch (this.currentStep()) {
-            case "consecutivePairs":
+            case consecutivePairs:
                 this.takeConsecutivePairsStep();
                 break;
+            default:
+                if (this.state.madeAChange) {
+                    this.setUp();
+                }
         }
     };
     StepManager.prototype.resetConsecutivePairs = function () {
@@ -342,20 +374,7 @@ var StepManager = /** @class */ (function () {
     };
     StepManager.prototype.takeConsecutivePairsStep = function () {
         if (this.state.consecutivePairs.currentPair.length) {
-            var pair = this.state.consecutivePairs.currentPair;
-            var spots = this.board.spots;
-            if (this.state.consecutivePairs.insertOpposite.length) {
-                console.log("INSERT OPPOSITE");
-            }
-            else if (this.state.consecutivePairs.checkEmpty.length) {
-                console.log("CHECK EMPTY");
-            }
-            else if (comparisonManager_1.ComparisonManager.compareTwo(spots[pair[0]], spots[pair[1]])) {
-                this.state.consecutivePairs.checkEmpty = indexManager_1.IndexManager.getNeighbors(pair, this.state.consecutivePairs.currentType, this.board.width, this.board.height);
-            }
-            else {
-                this.resetConsecutivePairs();
-            }
+            this.handleCurrentConsecutivePair();
         }
         else if (this.state.consecutivePairs.rows.length) {
             this.state.consecutivePairs.currentPair = this.state.consecutivePairs.rows.shift();
@@ -364,6 +383,36 @@ var StepManager = /** @class */ (function () {
         else if (this.state.consecutivePairs.columns.length) {
             this.state.consecutivePairs.currentPair = this.state.consecutivePairs.columns.shift();
             this.state.consecutivePairs.currentType = "column";
+        }
+    };
+    StepManager.prototype.handleCurrentConsecutivePair = function () {
+        var _this = this;
+        var pair = this.state.consecutivePairs.currentPair;
+        var spots = this.board.spots;
+        if (this.state.consecutivePairs.insertOpposite.length) {
+            var value_1 = this.board.value(pair[0]) === "O" ? "X" : "O";
+            this.state.consecutivePairs.insertOpposite.forEach(function (index) {
+                _this.board.setSpot(value_1, index);
+            });
+            this.resetConsecutivePairs();
+            this.state.madeAChange = true;
+        }
+        else if (this.state.consecutivePairs.checkEmpty.length) {
+            var empty = this.state.consecutivePairs.checkEmpty;
+            empty.forEach(function (index) {
+                if (!_this.board.value(index)) {
+                    _this.state.consecutivePairs.insertOpposite.push(index);
+                }
+            });
+            if (!this.state.consecutivePairs.insertOpposite.length) {
+                this.resetConsecutivePairs();
+            }
+        }
+        else if (comparisonManager_1.ComparisonManager.compareTwo(spots[pair[0]], spots[pair[1]])) {
+            this.state.consecutivePairs.checkEmpty = indexManager_1.IndexManager.getNeighbors(pair, this.state.consecutivePairs.currentType, this.board.width, this.board.height);
+        }
+        else {
+            this.resetConsecutivePairs();
         }
     };
     return StepManager;

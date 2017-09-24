@@ -126,4 +126,15 @@ describe("board", () => {
             expect(board.height).toEqual(6);
         });
     });
+
+    it("sets a board", () => {
+        board.setSpot("O", 0);
+        expect(board.value(0)).toEqual("O");
+        board.setSpot("X", 8);
+        expect(board.value(8)).toEqual("X");
+        board.setSpot("O", 13);
+        expect(board.value(13)).toEqual("O");
+        board.setSpot("X", 30);
+        expect(board.value(30)).toEqual("X");
+    });
 });
