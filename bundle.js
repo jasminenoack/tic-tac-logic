@@ -229,7 +229,13 @@ var IndexManager = /** @class */ (function () {
     };
     IndexManager.leftOver = function (board, type, index) {
         var counts = this.countValues(board, type, index);
-        var expectedCount = board.width / 2;
+        var expectedCount;
+        if (type === rowName) {
+            expectedCount = board.width / 2;
+        }
+        else {
+            expectedCount = board.height / 2;
+        }
         // tslint:disable-next-line:forin
         for (var currentType in counts) {
             counts[currentType] = expectedCount - counts[currentType];
@@ -512,6 +518,58 @@ exports.easy2 = {
         [4, 3],
         [4, 5],
         [5, 0],
+        [5, 5],
+    ],
+};
+exports.easy3 = {
+    height: 6,
+    os: [
+        [3, 0],
+        [4, 0],
+        [4, 2],
+        [4, 4],
+        [5, 2],
+    ],
+    width: 6,
+    xs: [
+        [0, 1],
+        [0, 5],
+        [1, 5],
+        [2, 2],
+    ],
+};
+exports.easy4 = {
+    height: 6,
+    os: [
+        [0, 3],
+        [2, 1],
+        [3, 5],
+        [5, 0],
+    ],
+    width: 6,
+    xs: [
+        [0, 5],
+        [1, 2],
+        [1, 5],
+        [4, 1],
+        [4, 3],
+    ],
+};
+exports.easy5 = {
+    height: 8,
+    os: [
+        [0, 5],
+        [1, 1],
+        [6, 2],
+        [6, 4],
+    ],
+    width: 6,
+    xs: [
+        [1, 4],
+        [2, 2],
+        [2, 3],
+        [3, 2],
+        [3, 4],
         [5, 5],
     ],
 };
@@ -1064,7 +1122,7 @@ exports = module.exports = __webpack_require__(10)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center;\n  display: block !important; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 300px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px 0px 30px 300px;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n    #tic-tac-puzzle.width-6 .row-counts {\n      height: 488px; }\n    #tic-tac-puzzle.width-6 .column-counts {\n      width: 488px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  margin-bottom: 20px; }\n", ""]);
+exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center;\n  display: block !important; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 300px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px 0px 30px 300px;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  margin-bottom: 20px; }\n", ""]);
 
 // exports
 

@@ -5,7 +5,7 @@ $hints-background: mistyrose;
 $x-color: deeppink;
 $o-color: deepskyblue;
 $hint-font-size: 30px;
-$hint-specific-dimension: $spot-dimension / 2;
+$hint-specific-dimension: $spot-dimension / 2 - 2;
 
 body {
     background: aliceblue;
@@ -157,13 +157,13 @@ body {
             width: $spot-dimension * 6;
         }
 
-        .row-counts {
-            height: $spot-dimension * 6 + $border-addition * 2
-        }
+        // .row-counts {
+        //     height: $spot-dimension * 6 + $border-addition * 2
+        // }
 
-        .column-counts {
-            width: $spot-dimension * 6 + $border-addition * 2
-        }
+        // .column-counts {
+        //     width: $spot-dimension * 6 + $border-addition * 2
+        // }
     }
     
 }

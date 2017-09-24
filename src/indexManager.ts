@@ -172,7 +172,12 @@ export class IndexManager {
 
     public static leftOver(board: Board, type: string, index: number) {
         const counts = this.countValues(board, type, index);
-        const expectedCount = board.width / 2;
+        let expectedCount;
+        if (type === rowName) {
+            expectedCount = board.width / 2;
+        } else {
+            expectedCount = board.height / 2;
+        }
         // tslint:disable-next-line:forin
         for (const currentType in counts) {
             counts[currentType] = expectedCount - counts[currentType];
