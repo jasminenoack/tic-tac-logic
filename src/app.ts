@@ -57,7 +57,7 @@ function updateRowCounts(board) {
     const counts = board.getRowCounts();
     const locations = boardElement.getElementsByClassName("row-count");
     counts.forEach((count, index) => {
-        locations[index].innerHTML = `<div class="x">${count.x}</div><div class="o">${count.o}</div>`
+        locations[index].innerHTML = `<div class="x">${count.x}</div><div class="o">${count.o}</div>`;
     });
 }
 
