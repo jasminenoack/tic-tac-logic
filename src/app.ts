@@ -6,6 +6,8 @@ const windowSearch = window.location.search;
 const boardElement = document.getElementById("tic-tac-puzzle");
 const stepElement = document.getElementById("step-text");
 const start = document.getElementById("start");
+const title = document.getElementById("title");
+const links = document.getElementById("links");
 
 function createBoard(board) {
     boardElement.className = `width-${board.width}`;
@@ -77,27 +79,41 @@ function updateAllSpots(board, manager) {
     updateColumnCounts(board);
 }
 
-if (windowSearch) {
-    let puzzleName;
-    if (windowSearch.split("p=").length > 1) {
-        puzzleName = windowSearch.split("p=")[1].split("&")[0];
+let puzzleName;
+puzzleName = windowSearch && windowSearch.split("p=").length > 1
+    ? windowSearch.split("p=")[1].split("&")[0]
+    : Object.keys(puzzles)[0];
+
+title.innerText = puzzleName;
+
+Object.keys(puzzles).forEach((name) => {
+    if (name !== puzzleName) {
+        const linkWrapper = document.createElement("div");
+        const link = document.createElement("a");
+        linkWrapper.appendChild(link);
+        link.innerText = name;
+        link.href = `//?p=${name}`;
+        links.appendChild(linkWrapper);
     }
+});
 
-    if (puzzleName) {
-        const puzzleData = puzzles[puzzleName];
-        const board = new Board(
-            puzzleData.width,
-            puzzleData.height,
-            puzzleData.xs,
-            puzzleData.os,
-        );
-        const manager = new StepManager(board);
-        createBoard(board);
-        updateAllSpots(board, manager);
-        updateStep(manager);
+if (puzzleName) {
+    const puzzleData = puzzles[puzzleName];
+    const board = new Board(
+        puzzleData.width,
+        puzzleData.height,
+        puzzleData.xs,
+        puzzleData.os,
+    );
+    const manager = new StepManager(board);
+    createBoard(board);
+    updateAllSpots(board, manager);
+    updateStep(manager);
 
-        start.addEventListener("click", () => {
-            const interval = setInterval(() => {
+    let interval;
+    start.addEventListener("click", () => {
+        if (!interval) {
+            interval = setInterval(() => {
                 manager.takeStep();
                 updateAllSpots(board, manager);
                 updateStep(manager);
@@ -106,6 +122,9 @@ if (windowSearch) {
                     clearInterval(interval);
                 }
             }, 100);
-        });
-    }
+        } else {
+            clearInterval(interval);
+            interval = null;
+        }
+    });
 }

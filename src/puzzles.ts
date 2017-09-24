@@ -1,4 +1,4 @@
-export const simpleBoard1 = {
+export const easy1 = {
     height: 6,
     os: [
         [1, 5],

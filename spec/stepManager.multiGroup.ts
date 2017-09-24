@@ -313,6 +313,71 @@ describe("StepManager multi group", () => {
             });
             expect(stepManager.state.madeAChange).toEqual(false);
         });
+
+        it("handles a 2 with a neighbor", () => {
+            stepManager.state.multiGroup.rows = [2, 3];
+            stepManager.state.madeAChange = false;
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 2,
+                currentType: "row",
+                groups: [],
+                higherCount: null,
+                higherValue: "",
+                insertInto: [],
+                lowerCount: null,
+                lowerValue: "",
+                rows: [3],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
+
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 2,
+                currentType: "row",
+                groups: [[13, 14], [16]],
+                higherCount: 2,
+                higherValue: "O",
+                insertInto: [],
+                lowerCount: 1,
+                lowerValue: "X",
+                rows: [3],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
+
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 2,
+                currentType: "row",
+                groups: [[13, 14], [16]],
+                higherCount: 2,
+                higherValue: "O",
+                insertInto: [16],
+                lowerCount: 1,
+                lowerValue: "X",
+                rows: [3],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
+
+            // stepManager.takeStep();
+            // expect(stepManager.state.multiGroup).toEqual({
+            //     columns: [3],
+            //     currentIndex: null,
+            //     currentType: "",
+            //     groups: [],
+            //     higherCount: null,
+            //     higherValue: "",
+            //     insertInto: [],
+            //     lowerCount: null,
+            //     lowerValue: "",
+            //     rows: [],
+            // });
+            // expect(stepManager.state.madeAChange).toEqual(true);
+            // expect(board.value(16)).toEqual("O");
+        });
     });
 
     describe("flags", () => {

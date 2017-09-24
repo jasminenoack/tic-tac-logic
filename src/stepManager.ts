@@ -190,7 +190,13 @@ export class StepManager {
     }
 
     public done() {
-        return !(this.currentStep() || this.state.madeAChange);
+        let filled = true;
+        this.board.spots.forEach((spot) => {
+            if (!spot.get()) {
+                filled = false;
+            }
+        });
+        return filled || !(this.currentStep() || this.state.madeAChange);
     }
 
     public stepText() {
@@ -206,7 +212,7 @@ export class StepManager {
                 return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
             case multiGroup:
                 // tslint:disable-next-line:max-line-length
-                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number.";
+                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number. We also find 2 blanks in a row where one of the neighbors matches the value with more instances.";
         }
     }
 
@@ -298,6 +304,7 @@ export class StepManager {
 
     public checkForInsertsMultiGroup(data) {
         let countGroupsHigher3 = 0;
+        // inserts from greater than 3s
         data.groups.forEach((group) => {
             if (group.length > 2) {
                 countGroupsHigher3++;
@@ -309,10 +316,38 @@ export class StepManager {
                     data.insertInto = data.insertInto.concat(group);
                 }
             });
-            if (!data.insertInto.length) {
-                this.resetMultiGroup(data);
+        }
+
+        // find inserts for groups of 2
+        let countGroupsHigher2 = countGroupsHigher3;
+        data.groups.forEach((group) => {
+            if (group.length === 2) {
+                const neighbors = IndexManager.getNeighbors(
+                    group, data.currentType, this.board.width, this.board.height,
+                );
+                let surrounded = false;
+                neighbors.forEach((neighbor) => {
+                    if (this.board.value(neighbor) === data.higherValue) {
+                        surrounded = true;
+                    }
+                });
+                if (surrounded) {
+                    countGroupsHigher2++;
+                }
             }
-        } else {
+        });
+
+        if (countGroupsHigher2 === data.lowerCount) {
+            data.groups.forEach((group) => {
+                if (group.length < 2) {
+                    if (data.insertInto.indexOf(group[0]) === -1) {
+                        data.insertInto = data.insertInto.concat(group);
+                    }
+                }
+            });
+        }
+
+        if (!data.insertInto.length) {
             this.resetMultiGroup(data);
         }
     }

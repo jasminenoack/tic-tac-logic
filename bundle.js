@@ -277,6 +277,8 @@ var windowSearch = window.location.search;
 var boardElement = document.getElementById("tic-tac-puzzle");
 var stepElement = document.getElementById("step-text");
 var start = document.getElementById("start");
+var title = document.getElementById("title");
+var links = document.getElementById("links");
 function createBoard(board) {
     boardElement.className = "width-" + board.width;
     var rowCounts = document.createElement("div");
@@ -340,29 +342,45 @@ function updateAllSpots(board, manager) {
     updateRowCounts(board);
     updateColumnCounts(board);
 }
-if (windowSearch) {
-    var puzzleName = void 0;
-    if (windowSearch.split("p=").length > 1) {
-        puzzleName = windowSearch.split("p=")[1].split("&")[0];
+var puzzleName;
+puzzleName = windowSearch && windowSearch.split("p=").length > 1
+    ? windowSearch.split("p=")[1].split("&")[0]
+    : Object.keys(puzzles)[0];
+title.innerText = puzzleName;
+Object.keys(puzzles).forEach(function (name) {
+    if (name !== puzzleName) {
+        var linkWrapper = document.createElement("div");
+        var link = document.createElement("a");
+        linkWrapper.appendChild(link);
+        link.innerText = name;
+        link.href = "//?p=" + name;
+        links.appendChild(linkWrapper);
     }
-    if (puzzleName) {
-        var puzzleData = puzzles[puzzleName];
-        var board_2 = new board_1.Board(puzzleData.width, puzzleData.height, puzzleData.xs, puzzleData.os);
-        var manager_1 = new stepManager_1.StepManager(board_2);
-        createBoard(board_2);
-        updateAllSpots(board_2, manager_1);
-        updateStep(manager_1);
-        start.addEventListener("click", function () {
-            var interval = setInterval(function () {
+});
+if (puzzleName) {
+    var puzzleData = puzzles[puzzleName];
+    var board_2 = new board_1.Board(puzzleData.width, puzzleData.height, puzzleData.xs, puzzleData.os);
+    var manager_1 = new stepManager_1.StepManager(board_2);
+    createBoard(board_2);
+    updateAllSpots(board_2, manager_1);
+    updateStep(manager_1);
+    var interval_1;
+    start.addEventListener("click", function () {
+        if (!interval_1) {
+            interval_1 = setInterval(function () {
                 manager_1.takeStep();
                 updateAllSpots(board_2, manager_1);
                 updateStep(manager_1);
                 if (manager_1.done()) {
-                    clearInterval(interval);
+                    clearInterval(interval_1);
                 }
             }, 100);
-        });
-    }
+        }
+        else {
+            clearInterval(interval_1);
+            interval_1 = null;
+        }
+    });
 }
 
 
@@ -462,7 +480,7 @@ exports.Spot = Spot;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.simpleBoard1 = {
+exports.easy1 = {
     height: 6,
     os: [
         [1, 5],
@@ -606,7 +624,13 @@ var StepManager = /** @class */ (function () {
             data.currentPair.length;
     };
     StepManager.prototype.done = function () {
-        return !(this.currentStep() || this.state.madeAChange);
+        var filled = true;
+        this.board.spots.forEach(function (spot) {
+            if (!spot.get()) {
+                filled = false;
+            }
+        });
+        return filled || !(this.currentStep() || this.state.madeAChange);
     };
     StepManager.prototype.stepText = function () {
         switch (this.currentStep()) {
@@ -621,7 +645,7 @@ var StepManager = /** @class */ (function () {
                 return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
             case multiGroup:
                 // tslint:disable-next-line:max-line-length
-                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number.";
+                return "In this step we need to compare groups of blanks. If there ia a group of 3 blanks than we know it must have at least one of each kind of value. We count the number of groups with at least 3 values and if it matches the count of the value with the least occurrences. We can insert into the other blanks the value with a greater number. We also find 2 blanks in a row where one of the neighbors matches the value with more instances.";
         }
     };
     StepManager.prototype.takeStep = function () {
@@ -713,7 +737,9 @@ var StepManager = /** @class */ (function () {
         }
     };
     StepManager.prototype.checkForInsertsMultiGroup = function (data) {
+        var _this = this;
         var countGroupsHigher3 = 0;
+        // inserts from greater than 3s
         data.groups.forEach(function (group) {
             if (group.length > 2) {
                 countGroupsHigher3++;
@@ -725,11 +751,33 @@ var StepManager = /** @class */ (function () {
                     data.insertInto = data.insertInto.concat(group);
                 }
             });
-            if (!data.insertInto.length) {
-                this.resetMultiGroup(data);
-            }
         }
-        else {
+        // find inserts for groups of 2
+        var countGroupsHigher2 = countGroupsHigher3;
+        data.groups.forEach(function (group) {
+            if (group.length === 2) {
+                var neighbors = indexManager_1.IndexManager.getNeighbors(group, data.currentType, _this.board.width, _this.board.height);
+                var surrounded_1 = false;
+                neighbors.forEach(function (neighbor) {
+                    if (_this.board.value(neighbor) === data.higherValue) {
+                        surrounded_1 = true;
+                    }
+                });
+                if (surrounded_1) {
+                    countGroupsHigher2++;
+                }
+            }
+        });
+        if (countGroupsHigher2 === data.lowerCount) {
+            data.groups.forEach(function (group) {
+                if (group.length < 2) {
+                    if (data.insertInto.indexOf(group[0]) === -1) {
+                        data.insertInto = data.insertInto.concat(group);
+                    }
+                }
+            });
+        }
+        if (!data.insertInto.length) {
             this.resetMultiGroup(data);
         }
     };
@@ -998,7 +1046,7 @@ exports = module.exports = __webpack_require__(10)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n  background: aliceblue; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px auto;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n    #tic-tac-puzzle.width-6 .row-counts {\n      height: 488px; }\n    #tic-tac-puzzle.width-6 .column-counts {\n      width: 488px; }\n\n#step-text {\n  width: 700px;\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  margin: 10px auto;\n  display: block; }\n", ""]);
+exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px auto;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 40px;\n        width: 40px;\n        line-height: 40px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n    #tic-tac-puzzle.width-6 .row-counts {\n      height: 488px; }\n    #tic-tac-puzzle.width-6 .column-counts {\n      width: 488px; }\n\n#step-text {\n  width: 700px;\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  margin: 10px auto;\n  display: block; }\n", ""]);
 
 // exports
 
