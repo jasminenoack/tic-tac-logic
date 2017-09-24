@@ -3,27 +3,37 @@ import * as puzzles from "./puzzles";
 import { StepManager } from "./stepManager";
 
 const windowSearch = window.location.search;
-const element = document.getElementById("tic-tac-puzzle");
+const boardElement = document.getElementById("tic-tac-puzzle");
+const stepElement = document.getElementById("step-text");
 
 function createBoard(board) {
-    element.className = `width-${board.width}`;
+    boardElement.className = `width-${board.width}`;
     for (let i = 0; i < board.width * board.height; i++) {
         const subElement = document.createElement("div");
         subElement.className = "spot";
-        element.appendChild(subElement);
+        boardElement.appendChild(subElement);
     }
 }
 
-function updateSpot(board, index) {
-    const spots = element.getElementsByClassName("spot");
+function updateSpot(board, index, manager) {
+    const spots = boardElement.getElementsByClassName("spot");
     if (spots && spots[index]) {
-        (spots[index] as HTMLElement).innerText = board.value(index);
+        const spot = spots[index];
+        (spot as HTMLElement).innerText = board.value(index);
+        const flag = manager.flag(index);
+        spot.className = `spot ${flag ? flag : ""}`;
     }
 }
 
-function updateAllSpots(board) {
+function updateStep(manager) {
+    if (manager.stepText()) {
+        stepElement.innerText = manager.stepText();
+    }
+}
+
+function updateAllSpots(board, manager) {
     for (let i = 0; i < board.width * board.height; i++) {
-        updateSpot(board, i);
+        updateSpot(board, i, manager);
     }
 }
 
@@ -41,11 +51,19 @@ if (windowSearch) {
             puzzleData.xs,
             puzzleData.os,
         );
-        createBoard(board);
-        updateAllSpots(board);
-
         const manager = new StepManager(board);
+        createBoard(board);
+        updateAllSpots(board, manager);
+        updateStep(manager);
 
-        // setInterval()
+        const interval = setInterval(() => {
+            manager.takeStep();
+            updateAllSpots(board, manager);
+            updateStep(manager);
+
+            if (manager.done()) {
+                clearInterval(interval);
+            }
+        }, 100);
     }
 }

@@ -84,6 +84,18 @@ export class StepManager {
         }
     }
 
+    public done() {
+        return !this.currentStep();
+    }
+
+    public stepText() {
+        switch (this.currentStep()) {
+            case consecutivePairs:
+                // tslint:disable-next-line:max-line-length
+                return "For this step we are looking for consecutive squares that have the same value. If we find them we check if the squares on either side are empty. If they are empty then we can insert the opposite symbol into those squares";
+        }
+    }
+
     public takeStep() {
         switch (this.currentStep()) {
             case consecutivePairs:

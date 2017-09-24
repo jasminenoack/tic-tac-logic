@@ -25,3 +25,21 @@ body {
     line-height: 80px;
     font-size: 40px;
 }
+
+.current {
+    background: lime;
+}
+
+.compare {
+    background: tomato;
+}
+
+.insert {
+    background: navy;
+}
+
+#step-text {
+    width: 700px;
+    font-size: 20px;
+    margin: auto;
+}

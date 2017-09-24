@@ -74,24 +74,33 @@ var board_1 = __webpack_require__(2);
 var puzzles = __webpack_require__(1);
 var stepManager_1 = __webpack_require__(5);
 var windowSearch = window.location.search;
-var element = document.getElementById("tic-tac-puzzle");
+var boardElement = document.getElementById("tic-tac-puzzle");
+var stepElement = document.getElementById("step-text");
 function createBoard(board) {
-    element.className = "width-" + board.width;
+    boardElement.className = "width-" + board.width;
     for (var i = 0; i < board.width * board.height; i++) {
         var subElement = document.createElement("div");
         subElement.className = "spot";
-        element.appendChild(subElement);
+        boardElement.appendChild(subElement);
     }
 }
-function updateSpot(board, index) {
-    var spots = element.getElementsByClassName("spot");
+function updateSpot(board, index, manager) {
+    var spots = boardElement.getElementsByClassName("spot");
     if (spots && spots[index]) {
-        spots[index].innerText = board.value(index);
+        var spot = spots[index];
+        spot.innerText = board.value(index);
+        var flag = manager.flag(index);
+        spot.className = "spot " + (flag ? flag : "");
     }
 }
-function updateAllSpots(board) {
+function updateStep(manager) {
+    if (manager.stepText()) {
+        stepElement.innerText = manager.stepText();
+    }
+}
+function updateAllSpots(board, manager) {
     for (var i = 0; i < board.width * board.height; i++) {
-        updateSpot(board, i);
+        updateSpot(board, i, manager);
     }
 }
 if (windowSearch) {
@@ -101,11 +110,19 @@ if (windowSearch) {
     }
     if (puzzleName) {
         var puzzleData = puzzles[puzzleName];
-        var board = new board_1.Board(puzzleData.width, puzzleData.height, puzzleData.xs, puzzleData.os);
-        createBoard(board);
-        updateAllSpots(board);
-        var manager = new stepManager_1.StepManager(board);
-        // setInterval()
+        var board_2 = new board_1.Board(puzzleData.width, puzzleData.height, puzzleData.xs, puzzleData.os);
+        var manager_1 = new stepManager_1.StepManager(board_2);
+        createBoard(board_2);
+        updateAllSpots(board_2, manager_1);
+        updateStep(manager_1);
+        var interval_1 = setInterval(function () {
+            manager_1.takeStep();
+            updateAllSpots(board_2, manager_1);
+            updateStep(manager_1);
+            if (manager_1.done()) {
+                clearInterval(interval_1);
+            }
+        }, 100);
     }
 }
 
@@ -353,6 +370,16 @@ var StepManager = /** @class */ (function () {
             this.state.consecutivePairs.currentType ||
             this.state.consecutivePairs.currentPair.length) {
             return consecutivePairs;
+        }
+    };
+    StepManager.prototype.done = function () {
+        return !this.currentStep();
+    };
+    StepManager.prototype.stepText = function () {
+        switch (this.currentStep()) {
+            case consecutivePairs:
+                // tslint:disable-next-line:max-line-length
+                return "For this step we are looking for consecutive squares that have the same value. If we find them we check if the squares on either side are empty. If they are empty then we can insert the opposite symbol into those squares";
         }
     };
     StepManager.prototype.takeStep = function () {
