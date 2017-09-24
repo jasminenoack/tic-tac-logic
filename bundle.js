@@ -353,7 +353,7 @@ Object.keys(puzzles).forEach(function (name) {
         var link = document.createElement("a");
         linkWrapper.appendChild(link);
         link.innerText = name;
-        link.href = "/?p=" + name;
+        link.href = "?p=" + name;
         links.appendChild(linkWrapper);
     }
 });

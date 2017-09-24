@@ -92,7 +92,7 @@ Object.keys(puzzles).forEach((name) => {
         const link = document.createElement("a");
         linkWrapper.appendChild(link);
         link.innerText = name;
-        link.href = `/?p=${name}`;
+        link.href = `?p=${name}`;
         links.appendChild(linkWrapper);
     }
 });
