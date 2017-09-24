@@ -373,7 +373,7 @@ var StepManager = /** @class */ (function () {
         }
     };
     StepManager.prototype.done = function () {
-        return !this.currentStep();
+        return !(this.currentStep() || this.state.madeAChange);
     };
     StepManager.prototype.stepText = function () {
         switch (this.currentStep()) {

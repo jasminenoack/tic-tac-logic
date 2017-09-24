@@ -85,7 +85,7 @@ export class StepManager {
     }
 
     public done() {
-        return !this.currentStep();
+        return !(this.currentStep() || this.state.madeAChange);
     }
 
     public stepText() {
