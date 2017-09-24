@@ -303,24 +303,14 @@ export class StepManager {
     }
 
     public checkForInsertsMultiGroup(data) {
-        let countGroupsHigher3 = 0;
-        // inserts from greater than 3s
+        const possibleInserts = [];
+        const needSmallValue = [];
+
         data.groups.forEach((group) => {
             if (group.length > 2) {
-                countGroupsHigher3++;
+                needSmallValue.push(group);
+                return;
             }
-        });
-        if (countGroupsHigher3 === data.lowerCount) {
-            data.groups.forEach((group) => {
-                if (group.length <= 2) {
-                    data.insertInto = data.insertInto.concat(group);
-                }
-            });
-        }
-
-        // find inserts for groups of 2
-        let countGroupsHigher2 = countGroupsHigher3;
-        data.groups.forEach((group) => {
             if (group.length === 2) {
                 const neighbors = IndexManager.getNeighbors(
                     group, data.currentType, this.board.width, this.board.height,
@@ -332,22 +322,22 @@ export class StepManager {
                     }
                 });
                 if (surrounded) {
-                    countGroupsHigher2++;
+                    needSmallValue.push(group);
+                    return;
                 }
             }
+            possibleInserts.push(group);
         });
 
-        if (countGroupsHigher2 === data.lowerCount) {
-            data.groups.forEach((group) => {
-                if (group.length < 2) {
-                    if (data.insertInto.indexOf(group[0]) === -1) {
-                        data.insertInto = data.insertInto.concat(group);
-                    }
-                }
+        if (
+            possibleInserts.length
+            && data.lowerCount
+            && needSmallValue.length === data.lowerCount
+        ) {
+            possibleInserts.forEach((group) => {
+                data.insertInto = data.insertInto.concat(group);
             });
-        }
-
-        if (!data.insertInto.length) {
+        } else {
             this.resetMultiGroup(data);
         }
     }

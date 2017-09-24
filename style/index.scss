@@ -1,4 +1,4 @@
-$spot-dimension: 80px;
+$spot-dimension: 60px;
 $border-addition: 4px;
 $border-color: navy;
 $hints-background: mistyrose;
@@ -6,6 +6,7 @@ $x-color: deeppink;
 $o-color: deepskyblue;
 $hint-font-size: 30px;
 $hint-specific-dimension: $spot-dimension / 2 - 2;
+$sidebar-width: 300px;
 
 body {
     background: aliceblue;
@@ -19,13 +20,13 @@ body {
     top: 0;
     left: 0;
     text-align: right;
-    width: 300px;
+    width: $sidebar-width;
 }
 
 #tic-tac-puzzle {
     // border: $border-addition solid black;
     box-sizing: border-box;
-    margin: 30px 0px 30px 300px;
+    margin: 30px 0px 30px $sidebar-width + 30px;
     position: relative;
 
     .board-wrapper{
@@ -49,7 +50,7 @@ body {
         border: 1px solid black;
         float: left;
         text-align: center;
-        line-height: 80px;
+        line-height: $spot-dimension;
         font-size: 40px;
 
         &.current {
@@ -156,16 +157,15 @@ body {
         .board-wrapper{
             width: $spot-dimension * 6;
         }
-
-        // .row-counts {
-        //     height: $spot-dimension * 6 + $border-addition * 2
-        // }
-
-        // .column-counts {
-        //     width: $spot-dimension * 6 + $border-addition * 2
-        // }
     }
-    
+
+    &.width-8 {
+        width: $spot-dimension * 9 + $border-addition * 2;
+
+        .board-wrapper{
+            width: $spot-dimension * 8;
+        }
+    }
 }
 
 

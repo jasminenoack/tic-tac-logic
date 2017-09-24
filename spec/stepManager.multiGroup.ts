@@ -362,21 +362,85 @@ describe("StepManager multi group", () => {
             });
             expect(stepManager.state.madeAChange).toEqual(false);
 
-            // stepManager.takeStep();
-            // expect(stepManager.state.multiGroup).toEqual({
-            //     columns: [3],
-            //     currentIndex: null,
-            //     currentType: "",
-            //     groups: [],
-            //     higherCount: null,
-            //     higherValue: "",
-            //     insertInto: [],
-            //     lowerCount: null,
-            //     lowerValue: "",
-            //     rows: [],
-            // });
-            // expect(stepManager.state.madeAChange).toEqual(true);
-            // expect(board.value(16)).toEqual("O");
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: null,
+                currentType: "",
+                groups: [],
+                higherCount: null,
+                higherValue: "",
+                insertInto: [],
+                lowerCount: null,
+                lowerValue: "",
+                rows: [3],
+            });
+            expect(stepManager.state.madeAChange).toEqual(true);
+            expect(board.value(16)).toEqual("O");
+        });
+
+        it("handles 2 sets of 2", () => {
+            const height = 10;
+            const width = 8;
+            const xs = [
+                [2, 4],
+                [9, 4],
+            ];
+            const os = [
+                [0, 4],
+                [1, 4],
+                [5, 4],
+                [8, 4],
+            ];
+            board = new Board(width, height, xs, os);
+            stepManager = new StepManager(board);
+
+            stepManager.state.multiGroup.columns = [4];
+            stepManager.state.madeAChange = false;
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 4,
+                currentType: "column",
+                groups: [],
+                higherCount: null,
+                higherValue: "",
+                insertInto: [],
+                lowerCount: null,
+                lowerValue: "",
+                rows: [],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
+
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 4,
+                currentType: "column",
+                groups: [[28, 36], [52, 60]],
+                higherCount: 3,
+                higherValue: "X",
+                insertInto: [],
+                lowerCount: 1,
+                lowerValue: "O",
+                rows: [],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
+
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 4,
+                currentType: "column",
+                groups: [[28, 36], [52, 60]],
+                higherCount: 3,
+                higherValue: "X",
+                insertInto: [52, 60],
+                lowerCount: 1,
+                lowerValue: "O",
+                rows: [],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
         });
     });
 

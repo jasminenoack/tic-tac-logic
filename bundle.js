@@ -573,6 +573,124 @@ exports.easy5 = {
         [5, 5],
     ],
 };
+exports.easy6 = {
+    height: 8,
+    os: [
+        [0, 0],
+        [2, 3],
+        [5, 0],
+        [6, 3],
+    ],
+    width: 6,
+    xs: [
+        [1, 1],
+        [1, 2],
+        [1, 4],
+        [3, 1],
+        [7, 2],
+    ],
+};
+exports.easy7 = {
+    height: 8,
+    os: [
+        [1, 3],
+        [3, 3],
+        [5, 1],
+    ],
+    width: 6,
+    xs: [
+        [0, 0],
+        [0, 2],
+        [2, 1],
+        [2, 5],
+        [4, 2],
+        [4, 4],
+        [7, 2],
+        [7, 3],
+        [7, 5],
+    ],
+};
+exports.easy8 = {
+    height: 8,
+    os: [
+        [0, 2],
+        [1, 3],
+        [4, 1],
+        [6, 0],
+        [6, 5],
+    ],
+    width: 6,
+    xs: [
+        [1, 0],
+        [1, 1],
+        [3, 3],
+        [3, 5],
+        [6, 2],
+        [7, 1],
+        [7, 5],
+    ],
+};
+exports.easy9 = {
+    height: 8,
+    os: [
+        [0, 0],
+        [0, 1],
+        [2, 3],
+        [5, 4],
+    ],
+    width: 6,
+    xs: [
+        [0, 4],
+        [3, 1],
+        [3, 2],
+        [5, 1],
+        [6, 5],
+        [7, 2],
+    ],
+};
+exports.easy10 = {
+    height: 8,
+    os: [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 3],
+        [3, 4],
+        [6, 3],
+    ],
+    width: 6,
+    xs: [
+        [2, 5],
+        [4, 0],
+        [4, 2],
+        [5, 4],
+        [6, 1],
+        [7, 3],
+    ],
+};
+exports.easy11 = {
+    height: 10,
+    os: [
+        [0, 4],
+        [1, 4],
+        [4, 7],
+        [5, 4],
+        [5, 7],
+        [8, 4],
+        [9, 0],
+    ],
+    width: 8,
+    xs: [
+        [1, 1],
+        [2, 3],
+        [3, 0],
+        [4, 0],
+        [6, 6],
+        [8, 1],
+        [8, 7],
+        [9, 1],
+    ],
+};
 
 
 /***/ }),
@@ -814,23 +932,13 @@ var StepManager = /** @class */ (function () {
     };
     StepManager.prototype.checkForInsertsMultiGroup = function (data) {
         var _this = this;
-        var countGroupsHigher3 = 0;
-        // inserts from greater than 3s
+        var possibleInserts = [];
+        var needSmallValue = [];
         data.groups.forEach(function (group) {
             if (group.length > 2) {
-                countGroupsHigher3++;
+                needSmallValue.push(group);
+                return;
             }
-        });
-        if (countGroupsHigher3 === data.lowerCount) {
-            data.groups.forEach(function (group) {
-                if (group.length <= 2) {
-                    data.insertInto = data.insertInto.concat(group);
-                }
-            });
-        }
-        // find inserts for groups of 2
-        var countGroupsHigher2 = countGroupsHigher3;
-        data.groups.forEach(function (group) {
             if (group.length === 2) {
                 var neighbors = indexManager_1.IndexManager.getNeighbors(group, data.currentType, _this.board.width, _this.board.height);
                 var surrounded_1 = false;
@@ -840,20 +948,20 @@ var StepManager = /** @class */ (function () {
                     }
                 });
                 if (surrounded_1) {
-                    countGroupsHigher2++;
+                    needSmallValue.push(group);
+                    return;
                 }
             }
+            possibleInserts.push(group);
         });
-        if (countGroupsHigher2 === data.lowerCount) {
-            data.groups.forEach(function (group) {
-                if (group.length < 2) {
-                    if (data.insertInto.indexOf(group[0]) === -1) {
-                        data.insertInto = data.insertInto.concat(group);
-                    }
-                }
+        if (possibleInserts.length
+            && data.lowerCount
+            && needSmallValue.length === data.lowerCount) {
+            possibleInserts.forEach(function (group) {
+                data.insertInto = data.insertInto.concat(group);
             });
         }
-        if (!data.insertInto.length) {
+        else {
             this.resetMultiGroup(data);
         }
     };
@@ -1122,7 +1230,7 @@ exports = module.exports = __webpack_require__(10)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center;\n  display: block !important; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 300px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px 0px 30px 300px;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 84px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 80px;\n    width: 80px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 80px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 84px;\n    position: absolute;\n    margin-top: 80px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 84px;\n    position: relative;\n    margin-left: 80px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 80px;\n      height: 80px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 38px;\n        width: 38px;\n        line-height: 38px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 568px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 480px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  margin-bottom: 20px; }\n", ""]);
+exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center;\n  display: block !important; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 300px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px 0px 30px 330px;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 64px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 60px;\n    width: 60px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 60px;\n    font-size: 40px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 64px;\n    position: absolute;\n    margin-top: 60px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 60px;\n      height: 60px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 28px;\n        width: 28px;\n        line-height: 28px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 28px;\n        width: 28px;\n        line-height: 28px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 64px;\n    position: relative;\n    margin-left: 60px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 60px;\n      height: 60px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 30px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 28px;\n        width: 28px;\n        line-height: 28px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 28px;\n        width: 28px;\n        line-height: 28px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 428px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 360px; }\n  #tic-tac-puzzle.width-8 {\n    width: 548px; }\n    #tic-tac-puzzle.width-8 .board-wrapper {\n      width: 480px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  margin-bottom: 20px; }\n", ""]);
 
 // exports
 
