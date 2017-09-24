@@ -30,7 +30,7 @@ describe("StepManager group", () => {
 
     describe("create", () => {
         it("has a state object", () => {
-            expect(stepManager.state.group).toEqual({
+            expect(stepManager.state.oneGroup).toEqual({
                 blanks: [],
                 columns: [],
                 count: {},
@@ -48,7 +48,7 @@ describe("StepManager group", () => {
     describe("set up", () => {
         it("sets up the new state for the board", () => {
             stepManager.setUp();
-            expect(stepManager.state.group).toEqual({
+            expect(stepManager.state.oneGroup).toEqual({
                 blanks: [],
                 columns: [0, 1, 2, 3, 4, 5],
                 count: {},
@@ -66,10 +66,10 @@ describe("StepManager group", () => {
     it("handles no blanks", () => {
         board.setSpot("O", 4);
         board.setSpot("X", 5);
-        stepManager.state.group.rows = [0, 1];
+        stepManager.state.oneGroup.rows = [0, 1];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -83,7 +83,7 @@ describe("StepManager group", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -97,7 +97,7 @@ describe("StepManager group", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -112,10 +112,10 @@ describe("StepManager group", () => {
     });
 
     it("handles rows with blanks in a row but bad counts", () => {
-        stepManager.state.group.rows = [0, 1];
+        stepManager.state.oneGroup.rows = [0, 1];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -130,7 +130,7 @@ describe("StepManager group", () => {
 
         // find the blanks
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4, 5],
             columns: [],
             count: {},
@@ -145,7 +145,7 @@ describe("StepManager group", () => {
 
         // if counts are not 1 and > 1 give up;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -160,11 +160,11 @@ describe("StepManager group", () => {
     });
 
     it("handles blanks not in order", () => {
-        stepManager.state.group.rows = [1, 2];
+        stepManager.state.oneGroup.rows = [1, 2];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
         board.setSpot("X", 8);
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -178,7 +178,7 @@ describe("StepManager group", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [6, 7, 10],
             columns: [],
             count: {},
@@ -192,7 +192,7 @@ describe("StepManager group", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
 
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -207,10 +207,10 @@ describe("StepManager group", () => {
     });
 
     it("handles with blanks, good counts, but right neighbors", () => {
-        stepManager.state.group.columns = [3, 4];
+        stepManager.state.oneGroup.columns = [3, 4];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [4],
             count: {},
@@ -223,7 +223,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [21, 27, 33],
             columns: [4],
             count: {},
@@ -238,7 +238,7 @@ describe("StepManager group", () => {
 
         // sets counts and blanks, finds neighbor to compare
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [21, 27, 33],
             columns: [4],
             count: { o: 1, x: 2 },
@@ -253,7 +253,7 @@ describe("StepManager group", () => {
 
         // if numbers fail then it's over
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [4],
             count: {},
@@ -270,10 +270,10 @@ describe("StepManager group", () => {
     it("handles that is actually going to work without neighbors", () => {
         stepManager.state.madeAChange = false;
         board.setSpot("O", 5);
-        stepManager.state.group.columns = [5];
+        stepManager.state.oneGroup.columns = [5];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -286,7 +286,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [17, 23, 29, 35],
             columns: [],
             count: {},
@@ -299,7 +299,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [17, 23, 29, 35],
             columns: [],
             count: { x: 3, o: 1 },
@@ -312,7 +312,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [17, 23, 29, 35],
             columns: [],
             count: { x: 3, o: 1 },
@@ -325,7 +325,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -343,10 +343,10 @@ describe("StepManager group", () => {
 
     it("handles a that is actually going to work with neighbors", () => {
         stepManager.state.madeAChange = false;
-        stepManager.state.group.columns = [4];
+        stepManager.state.oneGroup.columns = [4];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -359,7 +359,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4, 10, 16],
             columns: [],
             count: {},
@@ -372,7 +372,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4, 10, 16],
             columns: [],
             count: { x: 2, o: 1 },
@@ -385,7 +385,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4, 10, 16],
             columns: [],
             count: { x: 2, o: 1 },
@@ -398,7 +398,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -417,10 +417,10 @@ describe("StepManager group", () => {
         stepManager.state.madeAChange = false;
         board.setSpot("O", 5);
         board.setSpot("X", 17);
-        stepManager.state.group.columns = [5];
+        stepManager.state.oneGroup.columns = [5];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -433,7 +433,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [23, 29, 35],
             columns: [],
             count: {},
@@ -446,7 +446,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [23, 29, 35],
             columns: [],
             count: { x: 2, o: 1 },
@@ -459,7 +459,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [23, 29, 35],
             columns: [],
             count: { x: 2, o: 1 },
@@ -472,7 +472,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -490,9 +490,9 @@ describe("StepManager group", () => {
     it("handles a row with no other values", () => {
         stepManager.state.madeAChange = false;
         board.setSpot("X", 5);
-        stepManager.state.group.rows = [0];
+        stepManager.state.oneGroup.rows = [0];
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -505,7 +505,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4],
             columns: [],
             count: {},
@@ -518,7 +518,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4],
             columns: [],
             count: { o: 1, x: 0 },
@@ -531,7 +531,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [4],
             columns: [],
             count: { o: 1, x: 0 },
@@ -544,7 +544,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -560,12 +560,12 @@ describe("StepManager group", () => {
     });
 
     it("switches from rows to columns", () => {
-        stepManager.state.group.rows = [5];
-        stepManager.state.group.columns = [3];
+        stepManager.state.oneGroup.rows = [5];
+        stepManager.state.oneGroup.columns = [3];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [3],
             count: {},
@@ -578,7 +578,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [30, 31, 32, 33, 35],
             columns: [3],
             count: {},
@@ -591,7 +591,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [3],
             count: {},
@@ -604,7 +604,7 @@ describe("StepManager group", () => {
         });
         expect(stepManager.state.madeAChange).toEqual(false);
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -620,12 +620,12 @@ describe("StepManager group", () => {
 
     it("knows to try again if a change has been made", () => {
         stepManager.setUp();
-        const rows = stepManager.state.group.rows;
-        const columns = stepManager.state.group.columns;
+        const rows = stepManager.state.oneGroup.rows;
+        const columns = stepManager.state.oneGroup.columns;
         const newStepManager = new StepManager(board);
         newStepManager.state.madeAChange = true;
         newStepManager.takeStep();
-        expect(newStepManager.state.group).toEqual({
+        expect(newStepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [0, 1, 2, 3, 4, 5],
             count: {},
@@ -642,7 +642,7 @@ describe("StepManager group", () => {
     it("knows to stop if no change has been made", () => {
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
-        expect(stepManager.state.group).toEqual({
+        expect(stepManager.state.oneGroup).toEqual({
             blanks: [],
             columns: [],
             count: {},
@@ -658,11 +658,11 @@ describe("StepManager group", () => {
 
     describe("flags", () => {
         it("knows the flags no step", () => {
-            stepManager.state.group.currentIndex = null;
-            stepManager.state.group.blanks = [];
-            stepManager.state.group.currentType = "";
-            stepManager.state.group.neighbors = [];
-            stepManager.state.group.insertValue = [];
+            stepManager.state.oneGroup.currentIndex = null;
+            stepManager.state.oneGroup.blanks = [];
+            stepManager.state.oneGroup.currentType = "";
+            stepManager.state.oneGroup.neighbors = [];
+            stepManager.state.oneGroup.insertValue = [];
 
             expect(stepManager.flag(0)).toEqual(undefined);
             expect(stepManager.flag(1)).toEqual(undefined);
@@ -673,11 +673,11 @@ describe("StepManager group", () => {
         });
 
         it("knows the current row", () => {
-            stepManager.state.group.currentIndex = 0;
-            stepManager.state.group.blanks = [];
-            stepManager.state.group.currentType = "row";
-            stepManager.state.group.neighbors = [];
-            stepManager.state.group.insertValue = [];
+            stepManager.state.oneGroup.currentIndex = 0;
+            stepManager.state.oneGroup.blanks = [];
+            stepManager.state.oneGroup.currentType = "row";
+            stepManager.state.oneGroup.neighbors = [];
+            stepManager.state.oneGroup.insertValue = [];
 
             expect(stepManager.flag(0)).toEqual("current");
             expect(stepManager.flag(1)).toEqual("current");
@@ -688,11 +688,11 @@ describe("StepManager group", () => {
         });
 
         it("knows the blanks", () => {
-            stepManager.state.group.currentIndex = 0;
-            stepManager.state.group.blanks = [1, 2, 3];
-            stepManager.state.group.currentType = "row";
-            stepManager.state.group.neighbors = [];
-            stepManager.state.group.insertValue = [];
+            stepManager.state.oneGroup.currentIndex = 0;
+            stepManager.state.oneGroup.blanks = [1, 2, 3];
+            stepManager.state.oneGroup.currentType = "row";
+            stepManager.state.oneGroup.neighbors = [];
+            stepManager.state.oneGroup.insertValue = [];
 
             expect(stepManager.flag(0)).toEqual(undefined);
             expect(stepManager.flag(1)).toEqual("current");
@@ -703,11 +703,11 @@ describe("StepManager group", () => {
         });
 
         it("knows the neighbors", () => {
-            stepManager.state.group.currentIndex = 0;
-            stepManager.state.group.blanks = [1, 2, 3];
-            stepManager.state.group.currentType = "row";
-            stepManager.state.group.neighbors = [0, 4];
-            stepManager.state.group.insertValue = [];
+            stepManager.state.oneGroup.currentIndex = 0;
+            stepManager.state.oneGroup.blanks = [1, 2, 3];
+            stepManager.state.oneGroup.currentType = "row";
+            stepManager.state.oneGroup.neighbors = [0, 4];
+            stepManager.state.oneGroup.insertValue = [];
 
             expect(stepManager.flag(0)).toEqual("compare");
             expect(stepManager.flag(1)).toEqual("current");
@@ -718,11 +718,11 @@ describe("StepManager group", () => {
         });
 
         it("knows the flags on insert", () => {
-            stepManager.state.group.currentIndex = 0;
-            stepManager.state.group.blanks = [1, 2, 3];
-            stepManager.state.group.currentType = "row";
-            stepManager.state.group.neighbors = [0, 4];
-            stepManager.state.group.insertValue = [0];
+            stepManager.state.oneGroup.currentIndex = 0;
+            stepManager.state.oneGroup.blanks = [1, 2, 3];
+            stepManager.state.oneGroup.currentType = "row";
+            stepManager.state.oneGroup.neighbors = [0, 4];
+            stepManager.state.oneGroup.insertValue = [0];
 
             expect(stepManager.flag(0)).toEqual("insert");
             expect(stepManager.flag(1)).toEqual("current");

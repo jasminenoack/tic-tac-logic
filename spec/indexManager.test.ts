@@ -738,4 +738,96 @@ describe("IndexManager", () => {
             });
         });
     });
+
+    describe("blanks groups", () => {
+        let board;
+        beforeEach(() => {
+            const height = 6;
+            const width = 6;
+            const xs = [
+                [0, 1],
+                [0, 2],
+                [0, 4],
+
+                [1, 3],
+
+                [2, 0],
+                [2, 5],
+
+                [3, 4],
+
+                [4, 2],
+
+                [5, 5],
+            ];
+            const os = [
+                [0, 0],
+                [0, 3],
+                [0, 5],
+
+                [1, 5],
+
+                [2, 3],
+
+                [3, 1],
+
+                [4, 4],
+
+                [5, 4],
+            ];
+            board = new Board(width, height, xs, os);
+        });
+
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.blankGroups(board, "row", 0)).toEqual([]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.blankGroups(board, "row", 1)).toEqual([[6, 7, 8], [10]]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.blankGroups(board, "row", 2)).toEqual([[13, 14], [16]]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.blankGroups(board, "row", 3)).toEqual([[18], [20, 21], [23]]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.blankGroups(board, "row", 4)).toEqual([[24, 25], [27], [29]]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.blankGroups(board, "row", 5)).toEqual([[30, 31, 32, 33]]);
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.blankGroups(board, "column", 0)).toEqual([[6], [18, 24, 30]]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.blankGroups(board, "column", 1)).toEqual([[7, 13], [25, 31]]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.blankGroups(board, "column", 2)).toEqual([[8, 14, 20], [32]]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.blankGroups(board, "column", 3)).toEqual([[21, 27, 33]]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.blankGroups(board, "column", 4)).toEqual([[10, 16]]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.blankGroups(board, "column", 5)).toEqual([[23, 29]]);
+            });
+        });
+    });
 });

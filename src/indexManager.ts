@@ -1,7 +1,7 @@
 import { Board } from "./board";
 
-const row = "row";
-const column = "column";
+const rowName = "row";
+const columnName = "column";
 const x = "X";
 const o = "O";
 
@@ -82,9 +82,9 @@ export class IndexManager {
         const firstProcessedIndex = indexes[0];
         const lastProcessedIndex = indexes[indexes.length - 1];
         let currentIndexes;
-        if (type === row) {
+        if (type === rowName) {
             currentIndexes = this.getRowIndexes(this.getRowStart(firstProcessedIndex, width), width);
-        } else if (type === column) {
+        } else if (type === columnName) {
             currentIndexes = this.getColumnIndexes(this.getColumnStart(firstProcessedIndex, width), width, height);
         }
         const startIndex = currentIndexes.indexOf(firstProcessedIndex);
@@ -108,6 +108,32 @@ export class IndexManager {
                 result.push(currentIndex);
             }
         });
+        return result;
+    }
+
+    public static blankGroups(board: Board, type: string, index: number) {
+        const indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        const blanks = this.getBlanks(board, type, index);
+
+        const result = [];
+        let currentSeries = [];
+        let blankIndex = 0;
+
+        indexes.forEach((currentIndex) => {
+            if (currentIndex === blanks[blankIndex]) {
+                currentSeries.push(currentIndex);
+                blankIndex++;
+            } else {
+                if (currentSeries.length) {
+                    result.push(currentSeries);
+                    currentSeries = [];
+                }
+            }
+        });
+        if (currentSeries.length) {
+            result.push(currentSeries);
+            currentSeries = [];
+        }
         return result;
     }
 
@@ -155,9 +181,9 @@ export class IndexManager {
     }
 
     public static getSectionIndexes(type: string, index: number, width: number, height: number) {
-        if (type === row) {
+        if (type === rowName) {
             return this.getRowIndexes(index, width);
-        } else if (type === column) {
+        } else if (type === columnName) {
             return this.getColumnIndexes(index, width, height);
         }
     }

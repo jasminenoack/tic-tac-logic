@@ -70,8 +70,8 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var row = "row";
-var column = "column";
+var rowName = "row";
+var columnName = "column";
 var x = "X";
 var o = "O";
 var IndexManager = /** @class */ (function () {
@@ -143,10 +143,10 @@ var IndexManager = /** @class */ (function () {
         var firstProcessedIndex = indexes[0];
         var lastProcessedIndex = indexes[indexes.length - 1];
         var currentIndexes;
-        if (type === row) {
+        if (type === rowName) {
             currentIndexes = this.getRowIndexes(this.getRowStart(firstProcessedIndex, width), width);
         }
-        else if (type === column) {
+        else if (type === columnName) {
             currentIndexes = this.getColumnIndexes(this.getColumnStart(firstProcessedIndex, width), width, height);
         }
         var startIndex = currentIndexes.indexOf(firstProcessedIndex);
@@ -168,6 +168,30 @@ var IndexManager = /** @class */ (function () {
                 result.push(currentIndex);
             }
         });
+        return result;
+    };
+    IndexManager.blankGroups = function (board, type, index) {
+        var indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        var blanks = this.getBlanks(board, type, index);
+        var result = [];
+        var currentSeries = [];
+        var blankIndex = 0;
+        indexes.forEach(function (currentIndex) {
+            if (currentIndex === blanks[blankIndex]) {
+                currentSeries.push(currentIndex);
+                blankIndex++;
+            }
+            else {
+                if (currentSeries.length) {
+                    result.push(currentSeries);
+                    currentSeries = [];
+                }
+            }
+        });
+        if (currentSeries.length) {
+            result.push(currentSeries);
+            currentSeries = [];
+        }
         return result;
     };
     IndexManager.blanksInOrder = function (board, type, index) {
@@ -213,10 +237,10 @@ var IndexManager = /** @class */ (function () {
         return counts;
     };
     IndexManager.getSectionIndexes = function (type, index, width, height) {
-        if (type === row) {
+        if (type === rowName) {
             return this.getRowIndexes(index, width);
         }
-        else if (type === column) {
+        else if (type === columnName) {
             return this.getColumnIndexes(index, width, height);
         }
     };
@@ -468,7 +492,8 @@ var comparisonManager_1 = __webpack_require__(7);
 var indexManager_1 = __webpack_require__(0);
 var consecutivePairs = "consecutivePairs";
 var oneSep = "oneSep";
-var group = "group";
+var oneGroup = "oneGroup";
+var multiGroup = "multiGroup";
 var flags = {
     active: "current",
     compare: "compare",
@@ -489,7 +514,21 @@ var StepManager = /** @class */ (function () {
                 insertOpposite: [],
                 rows: [],
             },
-            group: {
+            madeAChange: true,
+            multiGroup: {
+                blanks: [],
+                columns: [],
+                currentIndex: null,
+                currentType: "",
+                groups: [],
+                higherCount: null,
+                higherValue: "",
+                insertInto: [],
+                lowerCount: null,
+                lowerValue: "",
+                rows: [],
+            },
+            oneGroup: {
                 blanks: [],
                 columns: [],
                 count: {},
@@ -500,7 +539,6 @@ var StepManager = /** @class */ (function () {
                 neighbors: [],
                 rows: [],
             },
-            madeAChange: true,
             oneSep: {
                 checkEmpty: [],
                 columns: [],
@@ -525,8 +563,10 @@ var StepManager = /** @class */ (function () {
         for (var i = 0; i < this.board.width; i++) {
             columns.push(i);
         }
-        this.state.group.rows = rows;
-        this.state.group.columns = columns;
+        this.state.oneGroup.rows = rows.slice();
+        this.state.oneGroup.columns = columns.slice();
+        this.state.multiGroup.rows = rows.slice();
+        this.state.multiGroup.columns = columns.slice();
         this.state.madeAChange = false;
     };
     StepManager.prototype.flag = function (index) {
@@ -535,8 +575,8 @@ var StepManager = /** @class */ (function () {
                 return this.getFlagFromCompareData(this.state.consecutivePairs, index);
             case oneSep:
                 return this.getFlagFromCompareData(this.state.oneSep, index);
-            case group:
-                return this.getFlagFromGroupData(this.state.group, index);
+            case oneGroup:
+                return this.getFlagFromGroupData(this.state.oneGroup, index);
         }
     };
     StepManager.prototype.currentStep = function () {
@@ -546,11 +586,17 @@ var StepManager = /** @class */ (function () {
         else if (this.checkCompareStep(this.state.oneSep)) {
             return oneSep;
         }
-        else if (this.state.group.rows.length ||
-            this.state.group.columns.length ||
-            this.state.group.currentIndex !== null) {
-            return group;
+        else if (this.checkGroupStep(this.state.oneGroup)) {
+            return oneGroup;
         }
+        else if (this.checkGroupStep(this.state.multiGroup)) {
+            return multiGroup;
+        }
+    };
+    StepManager.prototype.checkGroupStep = function (data) {
+        return data.rows.length ||
+            data.columns.length ||
+            data.currentIndex !== null;
     };
     StepManager.prototype.checkCompareStep = function (data) {
         return data.rows.length ||
@@ -569,7 +615,7 @@ var StepManager = /** @class */ (function () {
             case oneSep:
                 // tslint:disable-next-line:max-line-length
                 return "For this step we are looking at places where a square is equal to the square 2 away from it. If these are equal the item between must be the opposite or there would be 3 in a row.";
-            case group:
+            case oneGroup:
                 // tslint:disable-next-line:max-line-length
                 return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
         }
@@ -582,21 +628,37 @@ var StepManager = /** @class */ (function () {
             case oneSep:
                 this.takeOneSepStep();
                 break;
-            case group:
-                this.takeGroupStep();
+            case oneGroup:
+                this.takeOneGroupStep();
                 break;
+            case multiGroup:
+                this.takeMultiGroupStep();
             default:
                 if (this.state.madeAChange) {
                     this.setUp();
                 }
         }
     };
-    StepManager.prototype.takeGroupStep = function () {
-        var data = this.state.group;
+    StepManager.prototype.takeOneGroupStep = function () {
+        var data = this.state.oneGroup;
         if (data.currentIndex !== null) {
-            this.processCurrentGroup(data);
+            this.processCurrentOneGroup(data);
         }
-        else if (data.rows.length) {
+        else {
+            this.groupFindNext(data);
+        }
+    };
+    StepManager.prototype.takeMultiGroupStep = function () {
+        var data = this.state.multiGroup;
+        if (data.currentIndex !== null) {
+            this.processMultiGroup(data);
+        }
+        else {
+            this.groupFindNext(data);
+        }
+    };
+    StepManager.prototype.groupFindNext = function (data) {
+        if (data.rows.length) {
             data.currentIndex = data.rows.shift();
             data.currentType = "row";
         }
@@ -605,14 +667,14 @@ var StepManager = /** @class */ (function () {
             data.currentType = "column";
         }
     };
-    StepManager.prototype.processCurrentGroup = function (data) {
+    StepManager.prototype.processCurrentOneGroup = function (data) {
         var _this = this;
         if (data.insertValue.length) {
             data.insertValue.forEach(function (index) {
                 _this.board.setSpot(data.mainValue, index);
             });
             this.state.madeAChange = true;
-            this.resetGroup();
+            this.resetOneGroup();
         }
         else if (Object.keys(data.count).length) {
             this.groupDetermineInsert(data);
@@ -621,7 +683,14 @@ var StepManager = /** @class */ (function () {
             this.groupProcessBlanks(data);
         }
         else {
-            this.groupGetBlanks(data);
+            this.oneGroupGetBlanks(data);
+        }
+    };
+    StepManager.prototype.processMultiGroup = function (data) {
+        if (false) {
+        }
+        else {
+            this.multiGroupGetBlanks(data);
         }
     };
     StepManager.prototype.groupDetermineInsert = function (data) {
@@ -647,7 +716,7 @@ var StepManager = /** @class */ (function () {
             });
         }
         else {
-            this.resetGroup();
+            this.resetOneGroup();
         }
     };
     StepManager.prototype.groupProcessBlanks = function (data) {
@@ -667,16 +736,36 @@ var StepManager = /** @class */ (function () {
             }
         }
         else {
-            this.resetGroup();
+            this.resetOneGroup();
         }
     };
-    StepManager.prototype.groupGetBlanks = function (data) {
+    StepManager.prototype.multiGroupGetBlanks = function (data) {
         var blanks = indexManager_1.IndexManager.getBlanks(this.board, data.currentType, data.currentIndex);
         if (blanks.length) {
             data.blanks = blanks;
         }
         else {
-            this.resetGroup();
+            this.resetMultiGroup(data);
+        }
+    };
+    StepManager.prototype.resetMultiGroup = function (data) {
+        data.blanks = [];
+        data.currentIndex = null;
+        data.currentType = "";
+        data.groups = [];
+        data.higherCount = null;
+        data.higherValue = "";
+        data.insertInto = [];
+        data.lowerCount = null;
+        data.lowerValue = "";
+    };
+    StepManager.prototype.oneGroupGetBlanks = function (data) {
+        var blanks = indexManager_1.IndexManager.getBlanks(this.board, data.currentType, data.currentIndex);
+        if (blanks.length) {
+            data.blanks = blanks;
+        }
+        else {
+            this.resetOneGroup();
         }
     };
     StepManager.prototype.resetComparison = function (data) {
@@ -685,8 +774,8 @@ var StepManager = /** @class */ (function () {
         data.insertOpposite = [];
         data.checkEmpty = [];
     };
-    StepManager.prototype.resetGroup = function () {
-        var data = this.state.group;
+    StepManager.prototype.resetOneGroup = function () {
+        var data = this.state.oneGroup;
         data.blanks = [];
         data.count = {};
         data.currentIndex = null;

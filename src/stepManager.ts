@@ -11,7 +11,7 @@ interface IComparisonStep {
     rows: number[][];
 }
 
-interface IGroup {
+interface IOneGroup {
     blanks: number[];
     columns: number[];
     count: { [key: string]: number };
@@ -23,16 +23,32 @@ interface IGroup {
     rows: number[];
 }
 
+interface IMultiGroup {
+    blanks: number[];
+    columns: number[];
+    groups: number[][];
+    higherCount: number;
+    higherValue: string;
+    currentIndex: number | null;
+    currentType: string;
+    insertInto: number[];
+    lowerCount: number;
+    lowerValue: string;
+    rows: number[];
+}
+
 interface IStep {
     consecutivePairs: IComparisonStep;
     oneSep: IComparisonStep;
     madeAChange: boolean;
-    group: IGroup;
+    multiGroup: IMultiGroup;
+    oneGroup: IOneGroup;
 }
 
 const consecutivePairs = "consecutivePairs";
 const oneSep = "oneSep";
-const group = "group";
+const oneGroup = "oneGroup";
+const multiGroup = "multiGroup";
 
 const flags = {
     active: "current",
@@ -57,7 +73,21 @@ export class StepManager {
                 insertOpposite: [],
                 rows: [],
             },
-            group: {
+            madeAChange: true,
+            multiGroup: {
+                blanks: [],
+                columns: [],
+                currentIndex: null,
+                currentType: "",
+                groups: [],
+                higherCount: null,
+                higherValue: "",
+                insertInto: [],
+                lowerCount: null,
+                lowerValue: "",
+                rows: [],
+            },
+            oneGroup: {
                 blanks: [],
                 columns: [],
                 count: {},
@@ -68,7 +98,6 @@ export class StepManager {
                 neighbors: [],
                 rows: [],
             },
-            madeAChange: true,
             oneSep: {
                 checkEmpty: [],
                 columns: [],
@@ -107,8 +136,11 @@ export class StepManager {
         for (let i = 0; i < this.board.width; i++) {
             columns.push(i);
         }
-        this.state.group.rows = rows;
-        this.state.group.columns = columns;
+        this.state.oneGroup.rows = rows.slice();
+        this.state.oneGroup.columns = columns.slice();
+
+        this.state.multiGroup.rows = rows.slice();
+        this.state.multiGroup.columns = columns.slice();
 
         this.state.madeAChange = false;
     }
@@ -119,8 +151,8 @@ export class StepManager {
                 return this.getFlagFromCompareData(this.state.consecutivePairs, index);
             case oneSep:
                 return this.getFlagFromCompareData(this.state.oneSep, index);
-            case group:
-                return this.getFlagFromGroupData(this.state.group, index);
+            case oneGroup:
+                return this.getFlagFromGroupData(this.state.oneGroup, index);
         }
     }
 
@@ -134,12 +166,20 @@ export class StepManager {
         ) {
             return oneSep;
         } else if (
-            this.state.group.rows.length ||
-            this.state.group.columns.length ||
-            this.state.group.currentIndex !== null
+            this.checkGroupStep(this.state.oneGroup)
         ) {
-            return group;
+            return oneGroup;
+        } else if (
+            this.checkGroupStep(this.state.multiGroup)
+        ) {
+            return multiGroup;
         }
+    }
+
+    public checkGroupStep(data) {
+        return data.rows.length ||
+            data.columns.length ||
+            data.currentIndex !== null;
     }
 
     public checkCompareStep(data) {
@@ -161,7 +201,7 @@ export class StepManager {
             case oneSep:
                 // tslint:disable-next-line:max-line-length
                 return "For this step we are looking at places where a square is equal to the square 2 away from it. If these are equal the item between must be the opposite or there would be 3 in a row.";
-            case group:
+            case oneGroup:
                 // tslint:disable-next-line:max-line-length
                 return "For this step we are attempting to determine if we can make any assumptions based on the numbers we need to place. If we need to place one of a particular type and multiple of the other type we may be able to assume the outside elements are of the type with a greater number. If in a section of 4 we need 3 Os and 1 X in a row them Xs are on the outside. Otherwise we would end up with 3 Xs in a row. It will also fill in a group if all of one value is used up.";
         }
@@ -175,9 +215,11 @@ export class StepManager {
             case oneSep:
                 this.takeOneSepStep();
                 break;
-            case group:
-                this.takeGroupStep();
+            case oneGroup:
+                this.takeOneGroupStep();
                 break;
+            case multiGroup:
+                this.takeMultiGroupStep();
             default:
                 if (this.state.madeAChange) {
                     this.setUp();
@@ -185,11 +227,26 @@ export class StepManager {
         }
     }
 
-    public takeGroupStep() {
-        const data = this.state.group;
+    public takeOneGroupStep() {
+        const data = this.state.oneGroup;
         if (data.currentIndex !== null) {
-            this.processCurrentGroup(data);
-        } else if (data.rows.length) {
+            this.processCurrentOneGroup(data);
+        } else {
+            this.groupFindNext(data);
+        }
+    }
+
+    public takeMultiGroupStep() {
+        const data = this.state.multiGroup;
+        if (data.currentIndex !== null) {
+            this.processMultiGroup(data);
+        } else {
+            this.groupFindNext(data);
+        }
+    }
+
+    public groupFindNext(data) {
+        if (data.rows.length) {
             data.currentIndex = data.rows.shift();
             data.currentType = "row";
         } else if (data.columns.length) {
@@ -198,19 +255,27 @@ export class StepManager {
         }
     }
 
-    public processCurrentGroup(data) {
+    public processCurrentOneGroup(data) {
         if (data.insertValue.length) {
             data.insertValue.forEach((index) => {
                 this.board.setSpot(data.mainValue, index);
             });
             this.state.madeAChange = true;
-            this.resetGroup();
+            this.resetOneGroup();
         } else if (Object.keys(data.count).length) {
             this.groupDetermineInsert(data);
         } else if (data.blanks.length) {
             this.groupProcessBlanks(data);
         } else {
-            this.groupGetBlanks(data);
+            this.oneGroupGetBlanks(data);
+        }
+    }
+
+    public processMultiGroup(data) {
+        if (false) {
+
+        } else {
+            this.multiGroupGetBlanks(data);
         }
     }
 
@@ -242,7 +307,7 @@ export class StepManager {
                 }
             });
         } else {
-            this.resetGroup();
+            this.resetOneGroup();
         }
     }
 
@@ -272,16 +337,37 @@ export class StepManager {
                 data.mainValue = "X";
             }
         } else {
-            this.resetGroup();
+            this.resetOneGroup();
         }
     }
 
-    public groupGetBlanks(data) {
+    public multiGroupGetBlanks(data) {
         const blanks = IndexManager.getBlanks(this.board, data.currentType, data.currentIndex);
         if (blanks.length) {
             data.blanks = blanks;
         } else {
-            this.resetGroup();
+            this.resetMultiGroup(data);
+        }
+    }
+
+    public resetMultiGroup(data) {
+        data.blanks = [];
+        data.currentIndex = null;
+        data.currentType = "";
+        data.groups = [];
+        data.higherCount = null;
+        data.higherValue = "";
+        data.insertInto = [];
+        data.lowerCount = null;
+        data.lowerValue = "";
+    }
+
+    public oneGroupGetBlanks(data) {
+        const blanks = IndexManager.getBlanks(this.board, data.currentType, data.currentIndex);
+        if (blanks.length) {
+            data.blanks = blanks;
+        } else {
+            this.resetOneGroup();
         }
     }
 
@@ -292,8 +378,8 @@ export class StepManager {
         data.checkEmpty = [];
     }
 
-    private resetGroup() {
-        const data = this.state.group;
+    private resetOneGroup() {
+        const data = this.state.oneGroup;
         data.blanks = [];
         data.count = {};
         data.currentIndex = null;
