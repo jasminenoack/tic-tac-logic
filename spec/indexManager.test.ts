@@ -1,3 +1,4 @@
+import { Board } from "../src/board";
 import { IndexManager } from "../src/indexManager";
 
 describe("IndexManager", () => {
@@ -438,6 +439,302 @@ describe("IndexManager", () => {
                 expect(IndexManager.getBetween([5, 15], "column")).toEqual([10]);
                 expect(IndexManager.getBetween([10, 20], "column")).toEqual([15]);
                 expect(IndexManager.getBetween([15, 25], "column")).toEqual([20]);
+            });
+        });
+    });
+
+    describe("find blanks", () => {
+        let board;
+        beforeEach(() => {
+            const height = 6;
+            const width = 6;
+            const xs = [
+                [0, 1],
+                [0, 2],
+                [2, 0],
+                [4, 2],
+            ];
+            const os = [
+                [1, 5],
+                [2, 3],
+                [3, 1],
+                [4, 4],
+                [5, 4],
+            ];
+            board = new Board(width, height, xs, os);
+        });
+
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.getBlanks(board, "row", 0)).toEqual([0, 3, 4, 5]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.getBlanks(board, "row", 1)).toEqual([6, 7, 8, 9, 10]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.getBlanks(board, "row", 2)).toEqual([13, 14, 16, 17]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.getBlanks(board, "row", 3)).toEqual([18, 20, 21, 22, 23]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.getBlanks(board, "row", 4)).toEqual([24, 25, 27, 29]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.getBlanks(board, "row", 5)).toEqual([30, 31, 32, 33, 35]);
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.getBlanks(board, "column", 0)).toEqual([0, 6, 18, 24, 30]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.getBlanks(board, "column", 1)).toEqual([7, 13, 25, 31]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.getBlanks(board, "column", 2)).toEqual([8, 14, 20, 32]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.getBlanks(board, "column", 3)).toEqual([3, 9, 21, 27, 33]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.getBlanks(board, "column", 4)).toEqual([4, 10, 16, 22]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.getBlanks(board, "column", 5)).toEqual([5, 17, 23, 29, 35]);
+            });
+        });
+    });
+
+    describe("blanks in order", () => {
+        let board;
+        beforeEach(() => {
+            const height = 6;
+            const width = 6;
+            const xs = [
+                [0, 1],
+                [0, 2],
+                [2, 0],
+                [4, 2],
+            ];
+            const os = [
+                [1, 5],
+                [2, 3],
+                [3, 1],
+                [4, 4],
+                [5, 4],
+            ];
+            board = new Board(width, height, xs, os);
+        });
+
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.blanksInOrder(board, "row", 0)).toEqual(false);
+            });
+
+            it("1", () => {
+                expect(IndexManager.blanksInOrder(board, "row", 1)).toEqual(true);
+            });
+
+            it("2", () => {
+                expect(IndexManager.blanksInOrder(board, "row", 2)).toEqual(false);
+            });
+
+            it("3", () => {
+                expect(IndexManager.blanksInOrder(board, "row", 3)).toEqual(false);
+            });
+
+            it("4", () => {
+                expect(IndexManager.blanksInOrder(board, "row", 4)).toEqual(false);
+            });
+
+            it("5", () => {
+                expect(IndexManager.blanksInOrder(board, "row", 5)).toEqual(false);
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.blanksInOrder(board, "column", 0)).toEqual(false);
+            });
+
+            it("1", () => {
+                expect(IndexManager.blanksInOrder(board, "column", 1)).toEqual(false);
+            });
+
+            it("2", () => {
+                expect(IndexManager.blanksInOrder(board, "column", 2)).toEqual(false);
+            });
+
+            it("3", () => {
+                expect(IndexManager.blanksInOrder(board, "column", 3)).toEqual(false);
+            });
+
+            it("4", () => {
+                expect(IndexManager.blanksInOrder(board, "column", 4)).toEqual(true);
+            });
+
+            it("5", () => {
+                expect(IndexManager.blanksInOrder(board, "column", 5)).toEqual(false);
+            });
+        });
+    });
+
+    describe("count types", () => {
+        let board;
+        beforeEach(() => {
+            const height = 6;
+            const width = 6;
+            const xs = [
+                [0, 1],
+                [0, 2],
+                [2, 0],
+                [4, 2],
+            ];
+            const os = [
+                [1, 5],
+                [2, 3],
+                [3, 1],
+                [4, 4],
+                [5, 4],
+            ];
+            board = new Board(width, height, xs, os);
+        });
+
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.countValues(board, "row", 0)).toEqual({ x: 2, o: 0 });
+            });
+
+            it("1", () => {
+                expect(IndexManager.countValues(board, "row", 1)).toEqual({ x: 0, o: 1 });
+            });
+
+            it("2", () => {
+                expect(IndexManager.countValues(board, "row", 2)).toEqual({ x: 1, o: 1 });
+            });
+
+            it("3", () => {
+                expect(IndexManager.countValues(board, "row", 3)).toEqual({ x: 0, o: 1 });
+            });
+
+            it("4", () => {
+                expect(IndexManager.countValues(board, "row", 4)).toEqual({ x: 1, o: 1 });
+            });
+
+            it("5", () => {
+                expect(IndexManager.countValues(board, "row", 5)).toEqual({ x: 0, o: 1 });
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.countValues(board, "column", 0)).toEqual({ x: 1, o: 0 });
+            });
+
+            it("1", () => {
+                expect(IndexManager.countValues(board, "column", 1)).toEqual({ x: 1, o: 1 });
+            });
+
+            it("2", () => {
+                expect(IndexManager.countValues(board, "column", 2)).toEqual({ x: 2, o: 0 });
+            });
+
+            it("3", () => {
+                expect(IndexManager.countValues(board, "column", 3)).toEqual({ x: 0, o: 1 });
+            });
+
+            it("4", () => {
+                expect(IndexManager.countValues(board, "column", 4)).toEqual({ x: 0, o: 2 });
+            });
+
+            it("5", () => {
+                expect(IndexManager.countValues(board, "column", 5)).toEqual({ x: 0, o: 1 });
+            });
+        });
+    });
+
+    describe("left over", () => {
+        let board;
+        beforeEach(() => {
+            const height = 6;
+            const width = 6;
+            const xs = [
+                [0, 1],
+                [0, 2],
+                [2, 0],
+                [4, 2],
+            ];
+            const os = [
+                [1, 5],
+                [2, 3],
+                [3, 1],
+                [4, 4],
+                [5, 4],
+            ];
+            board = new Board(width, height, xs, os);
+        });
+
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.leftOver(board, "row", 0)).toEqual({ x: 1, o: 3 });
+            });
+
+            it("1", () => {
+                expect(IndexManager.leftOver(board, "row", 1)).toEqual({ x: 3, o: 2 });
+            });
+
+            it("2", () => {
+                expect(IndexManager.leftOver(board, "row", 2)).toEqual({ x: 2, o: 2 });
+            });
+
+            it("3", () => {
+                expect(IndexManager.leftOver(board, "row", 3)).toEqual({ x: 3, o: 2 });
+            });
+
+            it("4", () => {
+                expect(IndexManager.leftOver(board, "row", 4)).toEqual({ x: 2, o: 2 });
+            });
+
+            it("5", () => {
+                expect(IndexManager.leftOver(board, "row", 5)).toEqual({ x: 3, o: 2 });
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.leftOver(board, "column", 0)).toEqual({ x: 2, o: 3 });
+            });
+
+            it("1", () => {
+                expect(IndexManager.leftOver(board, "column", 1)).toEqual({ x: 2, o: 2 });
+            });
+
+            it("2", () => {
+                expect(IndexManager.leftOver(board, "column", 2)).toEqual({ x: 1, o: 3 });
+            });
+
+            it("3", () => {
+                expect(IndexManager.leftOver(board, "column", 3)).toEqual({ x: 3, o: 2 });
+            });
+
+            it("4", () => {
+                expect(IndexManager.leftOver(board, "column", 4)).toEqual({ x: 3, o: 1 });
+            });
+
+            it("5", () => {
+                expect(IndexManager.leftOver(board, "column", 5)).toEqual({ x: 3, o: 2 });
             });
         });
     });

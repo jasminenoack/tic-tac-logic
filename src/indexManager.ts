@@ -1,3 +1,10 @@
+import { Board } from "./board";
+
+const row = "row";
+const column = "column";
+const x = "X";
+const o = "O";
+
 export class IndexManager {
     public static getRowIndexes(row: number, width: number): number[] {
         const baseIndex = row * width;
@@ -75,9 +82,9 @@ export class IndexManager {
         const firstProcessedIndex = indexes[0];
         const lastProcessedIndex = indexes[indexes.length - 1];
         let currentIndexes;
-        if (type === "row") {
+        if (type === row) {
             currentIndexes = this.getRowIndexes(this.getRowStart(firstProcessedIndex, width), width);
-        } else if (type === "column") {
+        } else if (type === column) {
             currentIndexes = this.getColumnIndexes(this.getColumnStart(firstProcessedIndex, width), width, height);
         }
         const startIndex = currentIndexes.indexOf(firstProcessedIndex);
@@ -93,11 +100,73 @@ export class IndexManager {
         return results;
     }
 
+    public static getBlanks(board: Board, type: string, index: number) {
+        const indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        const result = [];
+        indexes.forEach((currentIndex) => {
+            if (!board.value(currentIndex)) {
+                result.push(currentIndex);
+            }
+        });
+        return result;
+    }
+
+    public static blanksInOrder(board: Board, type: string, index: number) {
+        const indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        const blanks = this.getBlanks(board, type, index);
+        if (blanks.length) {
+            const firstBlankIndex = indexes.indexOf(blanks[0]);
+            for (let i = firstBlankIndex; i < blanks.length; i++) {
+                if (indexes[firstBlankIndex + i] !== blanks[i]) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    public static countValues(board: Board, type: string, index: number) {
+        const indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        const result = {
+            o: 0,
+            x: 0,
+        };
+        indexes.forEach((currentIndex: number) => {
+            const value = board.value(currentIndex);
+            if (value === x) {
+                result.x += 1;
+            } else if (value === o) {
+                result.o += 1;
+            }
+        });
+        return result;
+    }
+
+    public static leftOver(board: Board, type: string, index: number) {
+        const counts = this.countValues(board, type, index);
+        const expectedCount = board.width / 2;
+        // tslint:disable-next-line:forin
+        for (const currentType in counts) {
+            counts[currentType] = expectedCount - counts[currentType];
+        }
+        return counts;
+    }
+
     private static getRowStart(index: number, width: number) {
         return Math.floor(index / width);
     }
 
     private static getColumnStart(index: number, width: number) {
         return index % width;
+    }
+
+    private static getSectionIndexes(type: string, index: number, width: number, height: number) {
+        if (type === row) {
+            return this.getRowIndexes(index, width);
+        } else if (type === column) {
+            return this.getColumnIndexes(index, width, height);
+        }
     }
 }

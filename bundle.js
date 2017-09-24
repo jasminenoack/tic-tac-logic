@@ -203,6 +203,10 @@ exports.Board = Board;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var row = "row";
+var column = "column";
+var x = "X";
+var o = "O";
 var IndexManager = /** @class */ (function () {
     function IndexManager() {
     }
@@ -272,10 +276,10 @@ var IndexManager = /** @class */ (function () {
         var firstProcessedIndex = indexes[0];
         var lastProcessedIndex = indexes[indexes.length - 1];
         var currentIndexes;
-        if (type === "row") {
+        if (type === row) {
             currentIndexes = this.getRowIndexes(this.getRowStart(firstProcessedIndex, width), width);
         }
-        else if (type === "column") {
+        else if (type === column) {
             currentIndexes = this.getColumnIndexes(this.getColumnStart(firstProcessedIndex, width), width, height);
         }
         var startIndex = currentIndexes.indexOf(firstProcessedIndex);
@@ -289,11 +293,71 @@ var IndexManager = /** @class */ (function () {
         }
         return results;
     };
+    IndexManager.getBlanks = function (board, type, index) {
+        var indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        var result = [];
+        indexes.forEach(function (currentIndex) {
+            if (!board.value(currentIndex)) {
+                result.push(currentIndex);
+            }
+        });
+        return result;
+    };
+    IndexManager.blanksInOrder = function (board, type, index) {
+        var indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        var blanks = this.getBlanks(board, type, index);
+        if (blanks.length) {
+            var firstBlankIndex = indexes.indexOf(blanks[0]);
+            for (var i = firstBlankIndex; i < blanks.length; i++) {
+                if (indexes[firstBlankIndex + i] !== blanks[i]) {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+        return true;
+    };
+    IndexManager.countValues = function (board, type, index) {
+        var indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        var result = {
+            o: 0,
+            x: 0,
+        };
+        indexes.forEach(function (currentIndex) {
+            var value = board.value(currentIndex);
+            if (value === x) {
+                result.x += 1;
+            }
+            else if (value === o) {
+                result.o += 1;
+            }
+        });
+        return result;
+    };
+    IndexManager.leftOver = function (board, type, index) {
+        var counts = this.countValues(board, type, index);
+        var expectedCount = board.width / 2;
+        // tslint:disable-next-line:forin
+        for (var currentType in counts) {
+            counts[currentType] = expectedCount - counts[currentType];
+        }
+        return counts;
+    };
     IndexManager.getRowStart = function (index, width) {
         return Math.floor(index / width);
     };
     IndexManager.getColumnStart = function (index, width) {
         return index % width;
+    };
+    IndexManager.getSectionIndexes = function (type, index, width, height) {
+        if (type === row) {
+            return this.getRowIndexes(index, width);
+        }
+        else if (type === column) {
+            return this.getColumnIndexes(index, width, height);
+        }
     };
     return IndexManager;
 }());
