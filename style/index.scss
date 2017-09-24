@@ -10,6 +10,7 @@ $hint-specific-dimension: $spot-dimension / 2;
 body {
     background: aliceblue;
     text-align: center;
+    display: block !important;
 }
 
 #puzzle-data {
