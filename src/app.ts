@@ -66,7 +66,7 @@ if (windowSearch) {
                 if (manager.done()) {
                     clearInterval(interval);
                 }
-            }, 250);
+            }, 100);
         });
     }
 }

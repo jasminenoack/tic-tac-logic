@@ -487,6 +487,78 @@ describe("StepManager group", () => {
         expect(board.value(35)).toEqual("X");
     });
 
+    it("handles a row with no other values", () => {
+        stepManager.state.madeAChange = false;
+        board.setSpot("X", 5);
+        stepManager.state.group.rows = [0];
+        stepManager.takeStep();
+        expect(stepManager.state.group).toEqual({
+            blanks: [],
+            columns: [],
+            count: {},
+            currentIndex: 0,
+            currentType: "row",
+            insertValue: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+        stepManager.takeStep();
+        expect(stepManager.state.group).toEqual({
+            blanks: [4],
+            columns: [],
+            count: {},
+            currentIndex: 0,
+            currentType: "row",
+            insertValue: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+        stepManager.takeStep();
+        expect(stepManager.state.group).toEqual({
+            blanks: [4],
+            columns: [],
+            count: { o: 1, x: 0 },
+            currentIndex: 0,
+            currentType: "row",
+            insertValue: [],
+            mainValue: "O",
+            neighbors: [3, 5],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+        stepManager.takeStep();
+        expect(stepManager.state.group).toEqual({
+            blanks: [4],
+            columns: [],
+            count: { o: 1, x: 0 },
+            currentIndex: 0,
+            currentType: "row",
+            insertValue: [4],
+            mainValue: "O",
+            neighbors: [3, 5],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+        stepManager.takeStep();
+        expect(stepManager.state.group).toEqual({
+            blanks: [],
+            columns: [],
+            count: {},
+            currentIndex: null,
+            currentType: "",
+            insertValue: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(true);
+        expect(board.value(4)).toEqual("O");
+    });
+
     it("switches from rows to columns", () => {
         stepManager.state.group.rows = [5];
         stepManager.state.group.columns = [3];
