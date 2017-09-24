@@ -1,0 +1,169 @@
+$spot-dimension: 80px;
+$border-addition: 4px;
+$border-color: navy;
+$hints-background: mistyrose;
+$x-color: deeppink;
+$o-color: deepskyblue;
+$hint-font-size: 30px;
+$hint-specific-dimension: $spot-dimension / 2;
+
+body {
+    background: aliceblue;
+}
+#tic-tac-puzzle {
+    // border: $border-addition solid black;
+    box-sizing: border-box;
+    margin: 30px auto;
+    position: relative;
+
+    .board-wrapper{
+        position: relative; 
+        margin-left: $spot-dimension + $border-addition;
+        box-sizing: content-box;
+        border-right: $border-addition solid black;
+        border-bottom: $border-addition solid black;
+
+        &:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+    }
+
+    .spot {
+        height: $spot-dimension;
+        width: $spot-dimension;
+        box-sizing: border-box;
+        border: 1px solid black;
+        float: left;
+        text-align: center;
+        line-height: 80px;
+        font-size: 40px;
+
+        &.current {
+            background: lime;
+        }
+
+        &.compare {
+            background: tomato;
+        }
+
+        &.insert {
+            background: $border-color;
+        }
+
+        &.X {
+            color: $x-color;
+        }
+
+        &.O {
+            color: $o-color;
+        }
+    }
+
+    .row-counts {
+        width: $spot-dimension + $border-addition;
+        position: absolute;
+        margin-top: $spot-dimension;
+        border: $border-addition solid $border-color;
+        border-right: 0;
+        background: $hints-background;
+        .row-count {
+            width: $spot-dimension;
+            height: $spot-dimension;
+            border: 1px solid black;
+            box-sizing: border-box;
+            position: relative;
+
+            div {
+                font-size: $hint-font-size;
+            }
+
+            .x {
+                color: $x-color;
+                height: $hint-specific-dimension;
+                width: $hint-specific-dimension;
+                line-height: $hint-specific-dimension;
+                text-align: center;
+            }
+            .o {
+                color: $o-color;
+                height: $hint-specific-dimension;
+                width: $hint-specific-dimension;
+                line-height: $hint-specific-dimension;
+                text-align: center;
+                float: right;
+            }
+        }
+    }
+
+    .column-counts {
+        height: $spot-dimension + $border-addition;
+        position: relative;
+        margin-left: $spot-dimension;
+        border: $border-addition solid $border-color;
+        border-bottom: 0;
+        background: $hints-background;
+        &:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+        .column-count {
+            width: $spot-dimension;
+            height: $spot-dimension;
+            border: 1px solid black;
+            box-sizing: border-box;
+            float: left;
+
+            div {
+                font-size: $hint-font-size;
+            }
+
+            .x {
+                color: $x-color;
+                height: $hint-specific-dimension;
+                width: $hint-specific-dimension;
+                line-height: $hint-specific-dimension;
+                text-align: center;
+            }
+            .o {
+                color: $o-color;
+                height: $hint-specific-dimension;
+                width: $hint-specific-dimension;
+                line-height: $hint-specific-dimension;
+                text-align: center;
+                float: right;
+            }
+        }
+    }
+
+    &.width-6 {
+        width: $spot-dimension * 7 + $border-addition * 2;
+
+        .board-wrapper{
+            width: $spot-dimension * 6;
+        }
+
+        .row-counts {
+            height: $spot-dimension * 6 + $border-addition * 2
+        }
+
+        .column-counts {
+            width: $spot-dimension * 6 + $border-addition * 2
+        }
+    }
+    
+}
+
+
+#step-text {
+    width: 700px;
+    font-size: 20px;
+    margin: auto;
+}
+
+#start {
+    margin: 10px auto;
+    display: block;
+}

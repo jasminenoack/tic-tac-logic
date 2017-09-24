@@ -19,6 +19,7 @@
   "homepage": "https://github.com/jasminenoack/tic-tac-logic#readme",
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
+    "css-loader": "^0.28.7",
     "es6-promise": "^4.1.1",
     "jasmine": "^2.8.0",
     "karma": "^1.7.1",
@@ -28,11 +29,13 @@
     "karma-typescript": "^3.0.6",
     "karma-webpack": "^2.0.4",
     "lodash": "^4.17.4",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
     "ts-loader": "^2.3.7",
     "tslint": "^5.7.0",
-    "typescript": "^2.5.2"
-  },
-  "dependencies": {
+    "typescript": "^2.5.2",
     "webpack": "^3.6.0"
-  }
+  },
+  "dependencies": {}
 }

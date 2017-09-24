@@ -29,4 +29,20 @@ export class Board {
             this.spots[index].set(value);
         }
     }
+
+    public getRowCounts() {
+        const result = [];
+        for (let i = 0; i < this.height; i++) {
+            result.push(IndexManager.countValues(this, "row", i));
+        }
+        return result;
+    }
+
+    public getColumnCounts() {
+        const result = [];
+        for (let i = 0; i < this.width; i++) {
+            result.push(IndexManager.countValues(this, "column", i));
+        }
+        return result;
+    }
 }

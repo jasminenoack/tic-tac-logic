@@ -137,4 +137,26 @@ describe("board", () => {
         board.setSpot("X", 30);
         expect(board.value(30)).toEqual("X");
     });
+
+    it("gets row counts", () => {
+        expect(board.getRowCounts()).toEqual([
+            { x: 2, o: 0 },
+            { x: 0, o: 1 },
+            { x: 1, o: 1 },
+            { x: 0, o: 1 },
+            { x: 1, o: 1 },
+            { x: 0, o: 1 },
+        ]);
+    });
+
+    it("gets column counts", () => {
+        expect(board.getColumnCounts()).toEqual([
+            { x: 1, o: 0 },
+            { x: 2, o: 1 },
+            { x: 1, o: 0 },
+            { x: 0, o: 1 },
+            { x: 0, o: 2 },
+            { x: 0, o: 1 },
+        ]);
+    });
 });

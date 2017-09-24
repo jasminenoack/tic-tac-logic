@@ -9,10 +9,30 @@ const start = document.getElementById("start");
 
 function createBoard(board) {
     boardElement.className = `width-${board.width}`;
+    const rowCounts = document.createElement("div");
+    rowCounts.className = "row-counts";
+    for (let i = 0; i < board.height; i++) {
+        const rowCount = document.createElement("div");
+        rowCount.className = "row-count";
+        rowCounts.appendChild(rowCount);
+    }
+    const columnCounts = document.createElement("div");
+    columnCounts.className = "column-counts";
+    for (let i = 0; i < board.width; i++) {
+        const columnCount = document.createElement("div");
+        columnCount.className = "column-count";
+        columnCounts.appendChild(columnCount);
+    }
+    boardElement.appendChild(rowCounts);
+    boardElement.appendChild(columnCounts);
+
+    const boardWrapper = document.createElement("div");
+    boardWrapper.className = "board-wrapper";
+    boardElement.appendChild(boardWrapper);
     for (let i = 0; i < board.width * board.height; i++) {
         const subElement = document.createElement("div");
         subElement.className = "spot";
-        boardElement.appendChild(subElement);
+        boardWrapper.appendChild(subElement);
     }
 }
 
@@ -20,9 +40,10 @@ function updateSpot(board, index, manager) {
     const spots = boardElement.getElementsByClassName("spot");
     if (spots && spots[index]) {
         const spot = spots[index];
-        (spot as HTMLElement).innerText = board.value(index);
+        const value = board.value(index);
+        (spot as HTMLElement).innerText = value;
         const flag = manager.flag(index);
-        spot.className = `spot ${flag ? flag : ""}`;
+        spot.className = `spot ${value} ${flag ? flag : ""}`;
     }
 }
 
@@ -32,10 +53,28 @@ function updateStep(manager) {
     }
 }
 
+function updateRowCounts(board) {
+    const counts = board.getRowCounts();
+    const locations = boardElement.getElementsByClassName("row-count");
+    counts.forEach((count, index) => {
+        locations[index].innerHTML = `<div class="x">${count.x}</div><div class="o">${count.o}</div>`
+    });
+}
+
+function updateColumnCounts(board) {
+    const counts = board.getColumnCounts();
+    const locations = boardElement.getElementsByClassName("column-count");
+    counts.forEach((count, index) => {
+        locations[index].innerHTML = `<div class="x">${count.x}</div><div class="o">${count.o}</div>`;
+    });
+}
+
 function updateAllSpots(board, manager) {
     for (let i = 0; i < board.width * board.height; i++) {
         updateSpot(board, i, manager);
     }
+    updateRowCounts(board);
+    updateColumnCounts(board);
 }
 
 if (windowSearch) {

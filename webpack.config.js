@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './src/app.ts',
+    entry: ['./src/app.ts', './style/index.scss'],
     output: {
         filename: 'bundle.js'
     },
@@ -8,7 +8,20 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.ts$/, loader: 'ts-loader' }
-        ]
+
+        ],
+        rules: [
+            { test: /\.ts$/, loader: 'ts-loader' },
+            {
+                test: /\.scss$/,
+                use: [{
+                    loader: "style-loader" // creates style nodes from JS strings
+                }, {
+                    loader: "css-loader" // translates CSS into CommonJS
+                }, {
+                    loader: "sass-loader" // compiles Sass to CSS
+                }
+                ]
+            }]
     }
 }
