@@ -154,19 +154,19 @@ export class IndexManager {
         return counts;
     }
 
+    public static getSectionIndexes(type: string, index: number, width: number, height: number) {
+        if (type === row) {
+            return this.getRowIndexes(index, width);
+        } else if (type === column) {
+            return this.getColumnIndexes(index, width, height);
+        }
+    }
+
     private static getRowStart(index: number, width: number) {
         return Math.floor(index / width);
     }
 
     private static getColumnStart(index: number, width: number) {
         return index % width;
-    }
-
-    private static getSectionIndexes(type: string, index: number, width: number, height: number) {
-        if (type === row) {
-            return this.getRowIndexes(index, width);
-        } else if (type === column) {
-            return this.getColumnIndexes(index, width, height);
-        }
     }
 }
