@@ -716,6 +716,80 @@ describe("StepManager group", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
     });
 
+    it("handles fiver", () => {
+        const height = 10;
+        const width = 8;
+        const xs = [
+            [0, 0],
+            [0, 1],
+            [0, 7],
+        ];
+        const os = [
+            [0, 2],
+            [0, 6],
+        ];
+        board = new Board(width, height, xs, os);
+        stepManager = new StepManager(board);
+        stepManager.state.oneGroup.rows = [0];
+        stepManager.state.madeAChange = false;
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [],
+            columns: [],
+            count: {},
+            currentIndex: 0,
+            currentType: "row",
+            insertInto: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [3, 4, 5],
+            columns: [],
+            count: {},
+            currentIndex: 0,
+            currentType: "row",
+            insertInto: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [3, 4, 5],
+            columns: [],
+            count: { o: 2, x: 1 },
+            currentIndex: 0,
+            currentType: "row",
+            insertInto: [],
+            mainValue: "O",
+            neighbors: [2, 6],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [3, 4, 5],
+            columns: [],
+            count: { o: 2, x: 1 },
+            currentIndex: 0,
+            currentType: "row",
+            insertInto: [5, 3],
+            mainValue: "O",
+            neighbors: [2, 6],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+    });
+
     describe("flags", () => {
         it("knows the flags no step", () => {
             stepManager.state.oneGroup.currentIndex = null;

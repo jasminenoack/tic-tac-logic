@@ -199,8 +199,9 @@ var IndexManager = /** @class */ (function () {
         var blanks = this.getBlanks(board, type, index);
         if (blanks.length) {
             var firstBlankIndex = indexes.indexOf(blanks[0]);
-            for (var i = firstBlankIndex; i < firstBlankIndex + blanks.length; i++) {
-                if (indexes[firstBlankIndex + i] !== blanks[i]) {
+            for (var i = 0; i < blanks.length; i++) {
+                var indexIndex = firstBlankIndex + i;
+                if (indexes[indexIndex] !== blanks[i]) {
                     return false;
                 }
             }
