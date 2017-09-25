@@ -1,10 +1,10 @@
-$spot-dimension: 60px;
+$spot-dimension: 40px;
 $border-addition: 4px;
 $border-color: navy;
 $hints-background: mistyrose;
 $x-color: deeppink;
 $o-color: deepskyblue;
-$hint-font-size: 30px;
+$hint-font-size: $spot-dimension * 0.48;
 $hint-specific-dimension: $spot-dimension / 2 - 2;
 $sidebar-width: 300px;
 
@@ -51,7 +51,7 @@ body {
         float: left;
         text-align: center;
         line-height: $spot-dimension;
-        font-size: 40px;
+        font-size: $spot-dimension * 0.8;
 
         &.current {
             background: lime;
@@ -186,5 +186,8 @@ body {
     display: inline-block;
 }
 #links {
+    -webkit-columns: 50px 4;
+    -moz-columns: 50px 4;
+    columns: 50px 4;
     margin-bottom: 20px;
 }
