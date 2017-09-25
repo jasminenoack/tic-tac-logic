@@ -199,7 +199,7 @@ var IndexManager = /** @class */ (function () {
         var blanks = this.getBlanks(board, type, index);
         if (blanks.length) {
             var firstBlankIndex = indexes.indexOf(blanks[0]);
-            for (var i = firstBlankIndex; i < blanks.length; i++) {
+            for (var i = firstBlankIndex; i < firstBlankIndex + blanks.length; i++) {
                 if (indexes[firstBlankIndex + i] !== blanks[i]) {
                     return false;
                 }
@@ -689,6 +689,79 @@ exports.easy11 = {
         [8, 1],
         [8, 7],
         [9, 1],
+    ],
+};
+exports.easy12 = {
+    height: 10,
+    os: [
+        [1, 3],
+        [1, 5],
+        [1, 7],
+        [3, 0],
+        [3, 2],
+        [5, 6],
+        [6, 2],
+        [6, 7],
+        [7, 1],
+        [8, 3],
+        [8, 4],
+        [8, 6],
+        [9, 3],
+        [9, 6],
+    ],
+    width: 8,
+    xs: [
+        [0, 0],
+        [0, 2],
+        [2, 1],
+        [3, 5],
+        [4, 7],
+        [5, 3],
+    ],
+};
+exports.easy13 = {
+    height: 10,
+    os: [
+        [2, 6],
+        [5, 1],
+        [6, 1],
+        [9, 0],
+    ],
+    width: 8,
+    xs: [
+        [0, 7],
+        [1, 4],
+        [1, 5],
+        [1, 7],
+        [2, 2],
+        [3, 3],
+        [3, 4],
+        [6, 5],
+        [7, 3],
+        [7, 5],
+        [8, 3],
+    ],
+};
+exports.easy14 = {
+    height: 10,
+    os: [
+        [2, 1],
+        [3, 6],
+        [6, 0],
+        [6, 7],
+        [8, 0],
+        [9, 0],
+    ],
+    width: 8,
+    xs: [
+        [0, 2],
+        [0, 4],
+        [0, 5],
+        [3, 2],
+        [4, 4],
+        [4, 5],
+        [5, 5],
+        [7, 1],
     ],
 };
 

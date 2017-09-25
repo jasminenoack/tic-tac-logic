@@ -589,6 +589,22 @@ describe("IndexManager", () => {
                 expect(IndexManager.blanksInOrder(board, "column", 5)).toEqual(false);
             });
         });
+
+        it("check bug", () => {
+            const height = 10;
+            const width = 8;
+            const xs = [
+                [0, 2],
+                [0, 5],
+            ];
+            const os = [
+                [0, 0],
+                [0, 1],
+                [0, 4],
+            ];
+            board = new Board(width, height, xs, os);
+            expect(IndexManager.blanksInOrder(board, "row", 0)).toEqual(false);
+        });
     });
 
     describe("count types", () => {

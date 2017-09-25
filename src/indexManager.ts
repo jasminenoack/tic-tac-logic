@@ -142,7 +142,7 @@ export class IndexManager {
         const blanks = this.getBlanks(board, type, index);
         if (blanks.length) {
             const firstBlankIndex = indexes.indexOf(blanks[0]);
-            for (let i = firstBlankIndex; i < blanks.length; i++) {
+            for (let i = firstBlankIndex; i < firstBlankIndex + blanks.length; i++) {
                 if (indexes[firstBlankIndex + i] !== blanks[i]) {
                     return false;
                 }

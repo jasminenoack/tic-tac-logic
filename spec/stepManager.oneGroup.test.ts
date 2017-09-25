@@ -656,6 +656,66 @@ describe("StepManager group", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
     });
 
+    it("doesn't have a bug", () => {
+        const height = 10;
+        const width = 8;
+        const xs = [
+            [0, 2],
+            [0, 5],
+        ];
+        const os = [
+            [0, 0],
+            [0, 1],
+            [0, 4],
+        ];
+        board = new Board(width, height, xs, os);
+        stepManager = new StepManager(board);
+        stepManager.state.oneGroup.rows = [0];
+        stepManager.state.madeAChange = false;
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [],
+            columns: [],
+            count: {},
+            currentIndex: 0,
+            currentType: "row",
+            insertInto: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [3, 6, 7],
+            columns: [],
+            count: {},
+            currentIndex: 0,
+            currentType: "row",
+            insertInto: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+
+        stepManager.takeStep();
+        expect(stepManager.state.oneGroup).toEqual({
+            blanks: [],
+            columns: [],
+            count: {},
+            currentIndex: null,
+            currentType: "",
+            insertInto: [],
+            mainValue: "",
+            neighbors: [],
+            rows: [],
+        });
+        expect(stepManager.state.madeAChange).toEqual(false);
+    });
+
     describe("flags", () => {
         it("knows the flags no step", () => {
             stepManager.state.oneGroup.currentIndex = null;
