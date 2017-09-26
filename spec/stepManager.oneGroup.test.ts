@@ -1,7 +1,7 @@
 import { Board } from "../src/board";
 import { StepManager } from "../src/stepManager";
 
-describe("StepManager group", () => {
+describe("StepManager one group", () => {
     let stepManager;
     let board;
     beforeEach(() => {
@@ -68,34 +68,6 @@ describe("StepManager group", () => {
         board.setSpot("X", 5);
         stepManager.state.oneGroup.rows = [0, 1];
         stepManager.state.madeAChange = false;
-        stepManager.takeStep();
-        expect(stepManager.state.oneGroup).toEqual({
-            blanks: [],
-            columns: [],
-            count: {},
-            currentIndex: 0,
-            currentType: "row",
-            insertInto: [],
-            mainValue: "",
-            neighbors: [],
-            rows: [1],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-
-        stepManager.takeStep();
-        expect(stepManager.state.oneGroup).toEqual({
-            blanks: [],
-            columns: [],
-            count: {},
-            currentIndex: null,
-            currentType: "",
-            insertInto: [],
-            mainValue: "",
-            neighbors: [],
-            rows: [1],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-
         stepManager.takeStep();
         expect(stepManager.state.oneGroup).toEqual({
             blanks: [],

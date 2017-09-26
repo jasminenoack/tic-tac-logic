@@ -88,38 +88,8 @@ describe("StepManager multi group", () => {
         // - - X - O -
         // - - - - O X
         it("handles no blanks", () => {
-            stepManager.state.multiGroup.rows = [0, 1];
+            stepManager.state.multiGroup.rows = [0, 1, 2];
             stepManager.state.madeAChange = false;
-            stepManager.takeStep();
-            expect(stepManager.state.multiGroup).toEqual({
-                columns: [],
-                currentIndex: 0,
-                currentType: "row",
-                groups: [],
-                higherCount: null,
-                higherValue: "",
-                insertInto: [],
-                lowerCount: null,
-                lowerValue: "",
-                rows: [1],
-            });
-            expect(stepManager.state.madeAChange).toEqual(false);
-
-            stepManager.takeStep();
-            expect(stepManager.state.multiGroup).toEqual({
-                columns: [],
-                currentIndex: null,
-                currentType: "",
-                groups: [],
-                higherCount: null,
-                higherValue: "",
-                insertInto: [],
-                lowerCount: null,
-                lowerValue: "",
-                rows: [1],
-            });
-            expect(stepManager.state.madeAChange).toEqual(false);
-
             stepManager.takeStep();
             expect(stepManager.state.multiGroup).toEqual({
                 columns: [],
@@ -131,7 +101,22 @@ describe("StepManager multi group", () => {
                 insertInto: [],
                 lowerCount: null,
                 lowerValue: "",
-                rows: [],
+                rows: [2],
+            });
+            expect(stepManager.state.madeAChange).toEqual(false);
+
+            stepManager.takeStep();
+            expect(stepManager.state.multiGroup).toEqual({
+                columns: [],
+                currentIndex: 1,
+                currentType: "row",
+                groups: [[6, 7, 8], [10]],
+                higherCount: 2,
+                higherValue: "X",
+                insertInto: [],
+                lowerCount: 2,
+                lowerValue: "O",
+                rows: [2],
             });
             expect(stepManager.state.madeAChange).toEqual(false);
         });

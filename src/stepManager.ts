@@ -256,12 +256,25 @@ export class StepManager {
     }
 
     public groupFindNext(data) {
+        let currentIndex;
+        let currentType;
         if (data.rows.length) {
-            data.currentIndex = data.rows.shift();
-            data.currentType = "row";
+            currentIndex = data.rows.shift();
+            currentType = "row";
         } else if (data.columns.length) {
-            data.currentIndex = data.columns.shift();
-            data.currentType = "column";
+            currentIndex = data.columns.shift();
+            currentType = "column";
+        }
+        if (currentIndex === undefined || !currentType) {
+            return;
+        }
+        if (
+            !IndexManager.getBlanks(this.board, currentType, currentIndex).length
+        ) {
+            this.groupFindNext(data);
+        } else {
+            data.currentIndex = currentIndex;
+            data.currentType = currentType;
         }
     }
 
@@ -517,13 +530,57 @@ export class StepManager {
     }
 
     private setNext(data) {
+        const step = this.currentStep();
+        let currentPair;
+        let currentType;
         if (data.rows.length) {
-            data.currentPair = data.rows.shift();
-            data.currentType = "row";
+            currentPair = data.rows.shift();
+            currentType = "row";
         } else if (data.columns.length) {
-            data.currentPair = data.columns.shift();
-            data.currentType = "column";
+            currentPair = data.columns.shift();
+            currentType = "column";
         }
+
+        if (!(currentPair && currentType)) {
+            return;
+        }
+        let comparisonFilled = true;
+        currentPair.forEach((index) => {
+            if (!this.board.value(index)) {
+                comparisonFilled = false;
+            }
+        });
+
+        let hasEmptyToFill = false;
+        switch (step) {
+            case oneSep:
+                const midIndex = (currentPair[0] + currentPair[1]) / 2;
+                if (!this.board.value(midIndex)) {
+                    hasEmptyToFill = true;
+                }
+                break;
+            case consecutivePairs:
+                const neighbors = IndexManager.getNeighbors(
+                    currentPair, currentType, this.board.width, this.board.height,
+                );
+                neighbors.forEach((index) => {
+                    if (!this.board.value(index)) {
+                        hasEmptyToFill = true;
+                    }
+                });
+                break;
+            default:
+                return;
+        }
+        if (
+            currentPair && currentType && !(hasEmptyToFill && comparisonFilled)
+        ) {
+            this.setNext(data);
+        } else {
+            data.currentPair = currentPair;
+            data.currentType = currentType;
+        }
+
     }
 
     private handleOneSepPair() {

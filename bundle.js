@@ -993,6 +993,42 @@ exports.easy22 = {
         [13, 8],
     ],
 };
+exports.easy23 = {
+    height: 14,
+    os: [
+        [1, 1],
+        [1, 2],
+        [2, 2],
+        [3, 6],
+        [4, 4],
+        [5, 9],
+        [6, 6],
+        [7, 1],
+        [7, 5],
+        [7, 7],
+        [8, 2],
+        [9, 2],
+        [11, 9],
+        [13, 0],
+        [13, 9],
+    ],
+    width: 10,
+    xs: [
+        [1, 8],
+        [4, 7],
+        [4, 8],
+        [5, 2],
+        [5, 3],
+        [6, 0],
+        [10, 0],
+        [10, 9],
+        [11, 6],
+        [12, 6],
+        [12, 7],
+        [12, 0],
+        [13, 3],
+    ],
+};
 
 
 /***/ }),
@@ -1183,13 +1219,25 @@ var StepManager = /** @class */ (function () {
         }
     };
     StepManager.prototype.groupFindNext = function (data) {
+        var currentIndex;
+        var currentType;
         if (data.rows.length) {
-            data.currentIndex = data.rows.shift();
-            data.currentType = "row";
+            currentIndex = data.rows.shift();
+            currentType = "row";
         }
         else if (data.columns.length) {
-            data.currentIndex = data.columns.shift();
-            data.currentType = "column";
+            currentIndex = data.columns.shift();
+            currentType = "column";
+        }
+        if (currentIndex === undefined || !currentType) {
+            return;
+        }
+        if (!indexManager_1.IndexManager.getBlanks(this.board, currentType, currentIndex).length) {
+            this.groupFindNext(data);
+        }
+        else {
+            data.currentIndex = currentIndex;
+            data.currentType = currentType;
         }
     };
     StepManager.prototype.processCurrentOneGroup = function (data) {
@@ -1417,13 +1465,52 @@ var StepManager = /** @class */ (function () {
         }
     };
     StepManager.prototype.setNext = function (data) {
+        var _this = this;
+        var step = this.currentStep();
+        var currentPair;
+        var currentType;
         if (data.rows.length) {
-            data.currentPair = data.rows.shift();
-            data.currentType = "row";
+            currentPair = data.rows.shift();
+            currentType = "row";
         }
         else if (data.columns.length) {
-            data.currentPair = data.columns.shift();
-            data.currentType = "column";
+            currentPair = data.columns.shift();
+            currentType = "column";
+        }
+        if (!(currentPair && currentType)) {
+            return;
+        }
+        var comparisonFilled = true;
+        currentPair.forEach(function (index) {
+            if (!_this.board.value(index)) {
+                comparisonFilled = false;
+            }
+        });
+        var hasEmptyToFill = false;
+        switch (step) {
+            case oneSep:
+                var midIndex = (currentPair[0] + currentPair[1]) / 2;
+                if (!this.board.value(midIndex)) {
+                    hasEmptyToFill = true;
+                }
+                break;
+            case consecutivePairs:
+                var neighbors = indexManager_1.IndexManager.getNeighbors(currentPair, currentType, this.board.width, this.board.height);
+                neighbors.forEach(function (index) {
+                    if (!_this.board.value(index)) {
+                        hasEmptyToFill = true;
+                    }
+                });
+                break;
+            default:
+                return;
+        }
+        if (currentPair && currentType && !(hasEmptyToFill && comparisonFilled)) {
+            this.setNext(data);
+        }
+        else {
+            data.currentPair = currentPair;
+            data.currentType = currentType;
         }
     };
     StepManager.prototype.handleOneSepPair = function () {

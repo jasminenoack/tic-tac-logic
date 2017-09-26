@@ -23,6 +23,13 @@ describe("StepManager one seperated", () => {
         ];
         board = new Board(width, height, xs, os);
         stepManager = new StepManager(board);
+
+        // - X X - - -
+        // - - - - - O
+        // X - - O - -
+        // - O - - - -
+        // - X - - O -
+        // - - - - O -
     });
 
     describe("create", () => {
@@ -69,17 +76,28 @@ describe("StepManager one seperated", () => {
     });
 
     it("iterates over rows", () => {
-        stepManager.state.oneSep.rows = [[0, 2], [1, 3]];
+        // - X X - - -
+        // - - - - - O
+        // X - - O - -
+        // - O - - - -
+        // - X - - O -
+        // - - - - O -
+        board.setSpot("O", 4);
+        board.setSpot("O", 9);
+        stepManager.state.oneSep.rows = [
+            [0, 2], [1, 3], [2, 4], [3, 5],
+            [6, 8], [7, 9], [8, 10], [9, 11],
+        ];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [0, 2],
+            currentPair: [2, 4],
             currentType: "row",
             insertOpposite: [],
-            rows: [[1, 3]],
+            rows: [[3, 5], [6, 8], [7, 9], [8, 10], [9, 11]],
         });
         expect(stepManager.state.madeAChange).toEqual(false);
 
@@ -90,7 +108,7 @@ describe("StepManager one seperated", () => {
             currentPair: [],
             currentType: "",
             insertOpposite: [],
-            rows: [[1, 3]],
+            rows: [[3, 5], [6, 8], [7, 9], [8, 10], [9, 11]],
 
         });
         expect(stepManager.state.madeAChange).toEqual(false);
@@ -99,7 +117,7 @@ describe("StepManager one seperated", () => {
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [1, 3],
+            currentPair: [9, 11],
             currentType: "row",
             insertOpposite: [],
             rows: [],
@@ -109,15 +127,22 @@ describe("StepManager one seperated", () => {
     });
 
     it("switches from rows to columns", () => {
-        stepManager.state.oneSep.rows = [[0, 2]];
-        stepManager.state.oneSep.columns = [[0, 12]];
+        // - X X - - -
+        // - - - - - O
+        // X - - O - -
+        // - O - - - -
+        // - X - - O -
+        // - - - - O -
+        board.setSpot("O", 14);
+        stepManager.state.oneSep.rows = [[12, 14]];
+        stepManager.state.oneSep.columns = [[2, 14]];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[0, 12]],
-            currentPair: [0, 2],
+            columns: [[2, 14]],
+            currentPair: [12, 14],
             currentType: "row",
             insertOpposite: [],
             rows: [],
@@ -128,7 +153,7 @@ describe("StepManager one seperated", () => {
         stepManager.takeStep();
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[0, 12]],
+            columns: [[2, 14]],
             currentPair: [],
             currentType: "",
             insertOpposite: [],
@@ -141,7 +166,7 @@ describe("StepManager one seperated", () => {
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [0, 12],
+            currentPair: [2, 14],
             currentType: "column",
             insertOpposite: [],
             rows: [],
@@ -200,13 +225,15 @@ describe("StepManager one seperated", () => {
     });
 
     it("iterates over columns", () => {
-        stepManager.state.oneSep.columns = [[0, 12], [6, 18]];
+        board.setSpot("O", 0);
+        board.setSpot("O", 24);
+        stepManager.state.oneSep.columns = [[0, 12], [6, 18], [12, 24]];
         stepManager.state.madeAChange = false;
 
         stepManager.takeStep();
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[6, 18]],
+            columns: [[6, 18], [12, 24]],
             currentPair: [0, 12],
             currentType: "column",
             insertOpposite: [],
@@ -218,7 +245,7 @@ describe("StepManager one seperated", () => {
         stepManager.takeStep();
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
-            columns: [[6, 18]],
+            columns: [[6, 18], [12, 24]],
             currentPair: [],
             currentType: "",
             insertOpposite: [],
@@ -231,7 +258,7 @@ describe("StepManager one seperated", () => {
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [6, 18],
+            currentPair: [12, 24],
             currentType: "column",
             insertOpposite: [],
             rows: [],
@@ -320,28 +347,32 @@ describe("StepManager one seperated", () => {
         expect(stepManager.state.madeAChange).toEqual(false);
     });
 
-    it("manages no empty", () => {
+    it("manages no empty or not filled", () => {
+        // - X X - - -
+        // - - - - - O
+        // X - - O - -
+        // - O - - - -
+        // - X - - O -
+        // - - - - O -
         board.setSpot("O", 3);
         board.setSpot("X", 9);
+        board.setSpot("X", 27);
+        // - X X O - -
+        // - - - X - O
+        // X - - O - -
+        // - O - - - -
+        // - X - - O -
+        // - - - - O -
+
         // 1 and 2 == x already
         stepManager.state.oneSep.rows = [];
-        stepManager.state.oneSep.columns = [[3, 15]];
+        stepManager.state.oneSep.columns = [[3, 15], [9, 21], [15, 27]];
         stepManager.state.madeAChange = false;
         stepManager.takeStep();
         expect(stepManager.state.oneSep).toEqual({
             checkEmpty: [],
             columns: [],
-            currentPair: [3, 15],
-            currentType: "column",
-            insertOpposite: [],
-            rows: [],
-        });
-        expect(stepManager.state.madeAChange).toEqual(false);
-        stepManager.takeStep();
-        expect(stepManager.state.oneSep).toEqual({
-            checkEmpty: [9],
-            columns: [],
-            currentPair: [3, 15],
+            currentPair: [15, 27],
             currentType: "column",
             insertOpposite: [],
             rows: [],
