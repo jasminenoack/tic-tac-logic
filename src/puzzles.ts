@@ -562,3 +562,14 @@ export const easy23 = {
         [13, 3],
     ],
 };
+
+export const easy24 = {
+    height: 14,
+    os: [
+
+    ],
+    width: 10,
+    xs: [
+
+    ],
+};

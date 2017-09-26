@@ -1029,6 +1029,12 @@ exports.easy23 = {
         [13, 3],
     ],
 };
+exports.easy24 = {
+    height: 14,
+    os: [],
+    width: 10,
+    xs: [],
+};
 
 
 /***/ }),
