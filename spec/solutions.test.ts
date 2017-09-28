@@ -14,6 +14,7 @@ describe("Solutions", () => {
         while (!manager.done()) {
             manager.takeStep();
         }
+        expect(solution.length).toBeTruthy();
         solution.forEach((letter, index) => {
             expect(letter).toEqual(board.value(index));
         });
@@ -192,6 +193,79 @@ describe("Solutions", () => {
         // tslint:disable-next-line:max-line-length
         const solution = "OOXXOOXXOXXXOOXXOOXOOXXOXXOOXOXOOXOOXXOXXOXOXXOOXOOXOXOXOOXXOXOXOOXXOXXOXOXOOXXOXOOXOXXOOXOXOOXXOOXXXOXXOOXXOOXOXOXOXOOXOXOXOXOXXOOXXOXOXXOO".split("");
         const puzzleData = puzzles.easy28;
+        test(solution, puzzleData);
+    });
+
+    it("solves puzzle easy 29", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XXOOXXOXOOXOXOOXXOXOOXOXOOXOXXOXOXXOOXOXXOXOXXOOXOXOOXOOXXOXOXOXOXOXXOOXXOXOXOXOXOOXOXXOOXOOXXOXOXOXOXXOXOOXXOXXOXOOXOXOOOXOXXOXOXXOXOXOXOOX".split("");
+        const puzzleData = puzzles.easy29;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 30", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy30;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 31", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy31;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 32", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy32;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 33", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy33;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 34", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy34;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 35", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy35;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 36", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy36;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 37", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy37;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 38", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy38;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 39", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy39;
+        test(solution, puzzleData);
+    });
+
+    xit("solves puzzle easy 40", () => {
+        const solution = "".split("");
+        const puzzleData = puzzles.easy40;
         test(solution, puzzleData);
     });
 });
