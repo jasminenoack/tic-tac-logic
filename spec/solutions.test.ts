@@ -238,8 +238,9 @@ describe("Solutions", () => {
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 35", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 35", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "OXOXOXXOOXXOOOXXOXOXOXOXXXOOXOXOXOXOOXOXXOXOXOOXOOXXOXOXOXXOXXOOXOOXXOOXOXXOOXXOXOXOXOOXOXXOOXOXXOOXXOOXOXOXOXXOXOXOXOXOOXOXOXXOXXOOXOXOOXOXOXOXXOXOXOOXXOXOOXOXOXXOXOOXXOXOXOOXOXXOXOXOXOOXOOXX".split("");
         const puzzleData = puzzles.easy35;
         test(solution, puzzleData);
     });
