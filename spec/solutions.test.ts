@@ -266,14 +266,16 @@ describe("Solutions", () => {
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 39", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 39", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XOXOXOXOOXOXOOXOXXOXXOOXXXOXOOXXOOXOOXXOOXOOXXOXOOXOXOXOXOXXXOOXXOOXOXXOXXOXOXXOOXOOOXXOXOXOXOOXXOOXXOOXOOXXXXOXOXOXOXOOOXXOOXXOXXOOOOXOXOOXXOXXXOOXOXXOOXXOOXOOXXOXOXOXXOXXOOXOXOXOOXOXOXOXXOXO".split("");
         const puzzleData = puzzles.easy39;
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 40", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 40", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XXOXXOOXOXOOXOOXOXXOOXOXOOXOXXOOXOXXXXOXOOXXOXOOXOXOXOOXOXOXOXOXOXOOXOXXOXOOXOXXOXXOXOXOXOOXXOOXXOXXOXOOXOOXOXOXOOXXOXXOOXOOXXOXOXXOXOXOXOXOXOOXOOXXOXXOXOXOOXOXXOOXOXXOXOXOOXXOXOOXOXXOOXXOXOXO".split("");
         const puzzleData = puzzles.easy40;
         test(solution, puzzleData);
     });
