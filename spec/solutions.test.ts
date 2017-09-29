@@ -217,20 +217,23 @@ describe("Solutions", () => {
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 32", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 32", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "OOXOXXOXXOXOXOOXXOXXOXOOXXOXOOXOXOOXOXXOOXOXXOXOXOXOXOXOOXXOXOOXOXOOXXOXOXXOXOOXOOXXXOXXOOXXOOXOXXOXOXOOXXOOOXOOXXOXOXOXXOXOXOXOXOXOOOXXOOXXOXOXOXOOXXOOXOXXXOOXXOOXOXXOOXXOOXXOOXOXOXOXOXXOXOOX".split("");
         const puzzleData = puzzles.easy32;
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 33", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 33", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "OOXOXOXOXXOXOXOOXXOOXOXXXXOXOXOXOXOOXOXXOOXOXOXOOXOOXXOXOXOXXXOOXOOXXOXOOOXXOXXOXOOXOXOXOXXOOXXOXXOOXOOXXOOXXOXOXOXOOXOXOOXXOXOXOXXOOXOOXOOXXOXXXOXXOXXOOXOOXOXOOXOXOXXOOXOXXOXOXOOXXOXXOOXXOOXO".split("");
         const puzzleData = puzzles.easy33;
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 34", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 34", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "OXXOOXOXOXXOXOOXOXOXOXXOOXOXXOXOXOOXXOXOOXXOXOXOOXOXXOOXOXOXXXOXXOOXOXOOOOXOOXXOXOXXOXXOOXOXXOXOXOOXXOOXOXOXXOXOXOXOXXOOOXXOOXXOXOXOXOOXOXOXOXOXOXOOXOXOXOXXOXXOXXOXOOXOXOXXOOXOOXOXXOOXXOXOXOOX".split("");
         const puzzleData = puzzles.easy34;
         test(solution, puzzleData);
     });
