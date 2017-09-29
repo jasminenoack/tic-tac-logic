@@ -1251,6 +1251,39 @@ exports.easy29 = {
         [13, 4],
     ],
 };
+exports.easy30 = {
+    height: 14,
+    os: [
+        [0, 1],
+        [0, 6],
+        [2, 4],
+        [2, 9],
+        [4, 6],
+        [8, 1],
+        [8, 2],
+        [9, 1],
+        [11, 3],
+        [13, 6],
+    ],
+    width: 10,
+    xs: [
+        [1, 8],
+        [2, 8],
+        [3, 5],
+        [4, 0],
+        [4, 4],
+        [5, 4],
+        [6, 7],
+        [7, 5],
+        [7, 9],
+        [8, 5],
+        [10, 2],
+        [10, 6],
+        [12, 5],
+        [13, 0],
+        [13, 3],
+    ],
+};
 
 
 /***/ }),
@@ -1526,6 +1559,32 @@ var StepManager = /** @class */ (function () {
             }
             possibleInserts.push(group);
         });
+        // look at the groups for insert starting at 1 from the end.
+        // If two groups are separated by 1 and the center matches
+        // the value we need a lot of then we can create a group with the two
+        // in need smaller values.
+        for (var i = possibleInserts.length - 2; i >= 0; i--) {
+            // if we've removed the next number
+            if (!possibleInserts[i + 1]) {
+                continue;
+            }
+            // if they aren't groups of 1
+            if (possibleInserts[i].length > 1 || possibleInserts[i + 1].length > 1) {
+                continue;
+            }
+            var indexes = indexManager_1.IndexManager.getSectionIndexes(data.currentType, data.currentIndex, this.board.width, this.board.height);
+            // if they aren't separated by 1.
+            var firstLocation = indexes.indexOf(possibleInserts[i][0]);
+            if (firstLocation + 2 !== indexes.indexOf(possibleInserts[i + 1][0])) {
+                continue;
+            }
+            // if the center isn't the high value
+            if (data.higherValue !== this.board.value(indexes[firstLocation + 1])) {
+                continue;
+            }
+            var newGroup = possibleInserts.splice(i, 2);
+            needSmallValue.push(newGroup);
+        }
         if (possibleInserts.length
             && data.lowerCount
             && needSmallValue.length === data.lowerCount) {

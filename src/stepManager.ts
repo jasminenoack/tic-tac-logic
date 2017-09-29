@@ -342,6 +342,37 @@ export class StepManager {
             possibleInserts.push(group);
         });
 
+        // look at the groups for insert starting at 1 from the end.
+        // If two groups are separated by 1 and the center matches
+        // the value we need a lot of then we can create a group with the two
+        // in need smaller values.
+        for (let i = possibleInserts.length - 2; i >= 0; i--) {
+            // if we've removed the next number
+            if (!possibleInserts[i + 1]) {
+                continue;
+            }
+            // if they aren't groups of 1
+            if (possibleInserts[i].length > 1 || possibleInserts[i + 1].length > 1) {
+                continue;
+            }
+            const indexes = IndexManager.getSectionIndexes(
+                data.currentType, data.currentIndex,
+                this.board.width, this.board.height,
+            );
+            // if they aren't separated by 1.
+            const firstLocation = indexes.indexOf(possibleInserts[i][0]);
+            if (firstLocation + 2 !== indexes.indexOf(possibleInserts[i + 1][0])) {
+                continue;
+            }
+            // if the center isn't the high value
+            if (data.higherValue !== this.board.value(indexes[firstLocation + 1])) {
+                continue;
+            }
+
+            const newGroup = possibleInserts.splice(i, 2);
+            needSmallValue.push(newGroup);
+        }
+
         if (
             possibleInserts.length
             && data.lowerCount

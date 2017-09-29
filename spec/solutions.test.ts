@@ -203,8 +203,9 @@ describe("Solutions", () => {
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 30", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 30", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XOXOOXOXOXOXOOXOXOXXXXOXOOXOXOOOXXOXOXOXXXOOXXOOXOOXXOXOXOOXXOXXOOXXOOOXOOXXOOXXXOOXOXOXXOOOXXOOXXOXOXXOXOXOXOXXOOXXOXOOOOXXOXXOOXXOOXXOOXXO".split("");
         const puzzleData = puzzles.easy30;
         test(solution, puzzleData);
     });
