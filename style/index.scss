@@ -174,6 +174,14 @@ body {
             width: $spot-dimension * 10;
         }
     }
+
+    &.width-12 {
+        width: $spot-dimension * 13 + $border-addition * 2;
+
+        .board-wrapper{
+            width: $spot-dimension * 12;
+        }
+    }
 }
 
 

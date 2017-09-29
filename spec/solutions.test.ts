@@ -210,8 +210,9 @@ describe("Solutions", () => {
         test(solution, puzzleData);
     });
 
-    xit("solves puzzle easy 31", () => {
-        const solution = "".split("");
+    it("solves puzzle easy 31", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "OOXOXXOXOXXOXOXOOXXOXOOXOXOXXOOXOOXXOXXOXOXXOXOOXOOXOXOOXXOXOXXOOXOOXOXXXXOOXOXXOOXOOOXXOXXOXXOOOXOOXXOOXOXXXOXXOOXXOXOOXOXXOOXOXOXOOXOOXXOOXXOXXOOXOOXXOXXOXOXOXXOOXOOXOXOXXOOXOXOXXXOXOOXXOOXO".split("");
         const puzzleData = puzzles.easy31;
         test(solution, puzzleData);
     });
