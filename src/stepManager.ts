@@ -36,7 +36,21 @@ interface IMultiGroup {
     rows: number[];
 }
 
+interface ICompareSections {
+    columns: number[][];
+    compareFirst: number[];
+    compareSecond: number[];
+    first: number;
+    firstCount: { [key: string]: number };
+    rows: number[][];
+    second: number;
+    secondCount: { [key: string]: number };
+    type: string;
+    insertPatterns: Array<{ [index: number]: string }>;
+}
+
 interface IStep {
+    compareSections: ICompareSections;
     consecutivePairs: IComparisonStep;
     oneSep: IComparisonStep;
     madeAChange: boolean;
@@ -48,6 +62,7 @@ const consecutivePairs = "consecutivePairs";
 const oneSep = "oneSep";
 const oneGroup = "oneGroup";
 const multiGroup = "multiGroup";
+const compareSections = "compareSections";
 
 const flags = {
     active: "current",
@@ -64,6 +79,18 @@ export class StepManager {
 
     public resetState() {
         this.state = {
+            compareSections: {
+                columns: [],
+                compareFirst: [],
+                compareSecond: [],
+                first: null,
+                firstCount: {},
+                insertPatterns: [],
+                rows: [],
+                second: null,
+                secondCount: {},
+                type: "",
+            },
             consecutivePairs: {
                 checkEmpty: [],
                 columns: [],
@@ -141,6 +168,9 @@ export class StepManager {
         this.state.multiGroup.columns = columns.slice();
 
         this.state.madeAChange = false;
+
+        this.state.compareSections.rows = IndexManager.sectionComparisonMatches(this.board.height);
+        this.state.compareSections.columns = IndexManager.sectionComparisonMatches(this.board.width);
     }
 
     public flag(index) {
@@ -153,6 +183,8 @@ export class StepManager {
                 return this.getFlagFromGroupData(this.state.oneGroup, index);
             case multiGroup:
                 return this.getFlagFromGroupData(this.state.multiGroup, index);
+            case compareSections:
+                return this.getFlagFromCompareSection(this.state.compareSections, index);
         }
     }
 
@@ -173,7 +205,15 @@ export class StepManager {
             this.checkGroupStep(this.state.multiGroup)
         ) {
             return multiGroup;
+        } else if (
+            this.checkCompareSectionStep(this.state.compareSections)
+        ) {
+            return compareSections;
         }
+    }
+
+    public checkCompareSectionStep(data) {
+        return data.columns.length || data.rows.length || data.first !== null;
     }
 
     public checkGroupStep(data) {
@@ -230,11 +270,178 @@ export class StepManager {
             case multiGroup:
                 this.takeMultiGroupStep();
                 break;
+            case compareSections:
+                this.takeCompareSectionStep();
+                break;
             default:
                 if (this.state.madeAChange) {
                     this.setUp();
                 }
         }
+    }
+
+    public takeCompareSectionStep() {
+        const data = this.state.compareSections;
+        if (data.first !== null) {
+            this.processCompareSectionStep(data);
+        } else {
+            this.nextCompareStep(data);
+        }
+    }
+
+    public checkIfValidCompareSections(data, value) {
+        // check that there is a 1 -- 0 relationship
+        if (
+            value === "X" &&
+            !(
+                (data.firstCount.x === 0 && data.secondCount.x === 1)
+                || (data.firstCount.x === 1 && data.secondCount.x === 0)
+            )
+        ) {
+            return false;
+        }
+        if (
+            value === "O" &&
+            !(
+                (data.firstCount.o === 0 && data.secondCount.o === 1)
+                || (data.firstCount.o === 1 && data.secondCount.o === 0)
+            )
+        ) {
+            return false;
+        }
+        // check if the sections already conflict
+        const firstIndexes = IndexManager.getSectionIndexes(
+            data.type, data.first, this.board.width, this.board.height,
+        );
+        const secondIndexes = IndexManager.getSectionIndexes(
+            data.type, data.second, this.board.width, this.board.height,
+        );
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < firstIndexes.length; i++) {
+            const firstValue = this.board.value(firstIndexes[i]);
+            const secondValue = this.board.value(secondIndexes[i]);
+            if (firstValue && secondValue && firstValue !== secondValue) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public findLocationToInsertFromComparison(value, data) {
+        const firstIndexIndexes = IndexManager.indexIndexesForValue(
+            this.board, data.type, data.first, value,
+        );
+        const secondIndexIndexes = IndexManager.indexIndexesForValue(
+            this.board, data.type, data.second, value,
+        );
+
+        const union = [];
+        let difference = [];
+
+        while (firstIndexIndexes.length && secondIndexIndexes.length) {
+            const firstIndex = firstIndexIndexes[0];
+            const secondIndex = secondIndexIndexes[0];
+            if (firstIndex === secondIndex) {
+                union.push(firstIndexIndexes.shift());
+                secondIndexIndexes.shift();
+            } else if (firstIndex < secondIndex) {
+                difference.push(firstIndexIndexes.shift());
+            } else {
+                difference.push(secondIndexIndexes.shift());
+            }
+        }
+        difference = difference.concat(firstIndexIndexes).concat(secondIndexIndexes);
+        if (difference.length === 1) {
+            const firstIndexes = IndexManager.getSectionIndexes(
+                data.type, data.first, this.board.width, this.board.height,
+            );
+            const secondIndexes = IndexManager.getSectionIndexes(
+                data.type, data.second, this.board.width, this.board.height,
+            );
+            const diffIndex = difference[0];
+            if (!this.board.value(firstIndexes[diffIndex])) {
+                return firstIndexes[diffIndex];
+            } else if (!this.board.value(secondIndexes[diffIndex])) {
+                return secondIndexes[diffIndex];
+            }
+        }
+    }
+
+    public processCompareSectionStep(data) {
+        if (data.insertPatterns.length) {
+            data.insertPatterns.forEach((pattern) => {
+                this.insert([pattern.index], pattern.value);
+            });
+            this.resetCompareSectionStep(data);
+        } else if (data.first || data.second) {
+            if (this.checkIfValidCompareSections(data, "X")) {
+                const insertLocation = this.findLocationToInsertFromComparison("X", data);
+                if (insertLocation !== undefined) {
+                    data.insertPatterns.push({ index: insertLocation, value: "O" });
+                }
+            }
+            if (this.checkIfValidCompareSections(data, "O")) {
+                const insertLocation = this.findLocationToInsertFromComparison("O", data);
+                if (insertLocation !== undefined) {
+                    data.insertPatterns.push({ index: insertLocation, value: "X" });
+                }
+            }
+            if (!data.insertPatterns.length) {
+                this.resetCompareSectionStep(data);
+            }
+        } else {
+            this.resetCompareSectionStep(data);
+        }
+    }
+
+    public nextCompareStep(data) {
+        let first;
+        let second;
+        let type;
+        if (data.rows.length) {
+            type = "row";
+            [first, second] = data.rows.shift();
+        } else {
+            type = "column";
+            [first, second] = data.columns.shift() || [0, 0];
+        }
+
+        const firstLeft = IndexManager.leftOver(this.board, type, first);
+        const secondLeft = IndexManager.leftOver(this.board, type, second);
+        if (
+            (first || second) &&
+            !(
+                (
+                    firstLeft.x <= 1 || firstLeft.o <= 1
+                ) && (
+                    secondLeft.x <= 1 || secondLeft.o <= 1
+                ) && (
+                    firstLeft.x + firstLeft.o + secondLeft.x + secondLeft.o !== 0
+                )
+            )
+        ) {
+            this.nextCompareStep(data);
+            return;
+        } else if (first || second) {
+            data.first = first;
+            data.second = second;
+            data.type = type;
+            data.firstCount = firstLeft;
+            data.secondCount = secondLeft;
+        } else {
+            this.resetCompareSectionStep(data);
+        }
+    }
+
+    public resetCompareSectionStep(data) {
+        data.first = null;
+        data.second = null;
+        data.type = "";
+        data.firstCount = {};
+        data.secondCount = {};
+        data.insertPatterns = [];
+        data.compareFirst = [];
+        data.compareSecond = [];
     }
 
     public takeOneGroupStep() {
@@ -541,6 +748,34 @@ export class StepManager {
             )
         ) {
             return flags.active;
+        }
+    }
+
+    private getFlagFromCompareSection(data, index) {
+        if (data.insertPatterns.length) {
+            // tslint:disable-next-line:prefer-for-of
+            for (let i = 0; i < data.insertPatterns.length; i++) {
+                if (index === data.insertPatterns[i].index) {
+                    return "insert";
+                }
+            }
+        }
+        if (data.first !== null) {
+            const indexes = IndexManager.getSectionIndexes(
+                data.type, data.first, this.board.width, this.board.height,
+            );
+            if (indexes.indexOf(index) !== -1) {
+                return "current";
+            }
+        }
+
+        if (data.second !== null) {
+            const indexes = IndexManager.getSectionIndexes(
+                data.type, data.second, this.board.width, this.board.height,
+            );
+            if (indexes.indexOf(index) !== -1) {
+                return "compare";
+            }
         }
     }
 

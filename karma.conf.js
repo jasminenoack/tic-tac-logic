@@ -1,12 +1,12 @@
 var webpackConfig = require('./webpack.config.js');
 
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
         frameworks: ["jasmine"],
 
         files: [
             'spec/**/*.ts',
-            {pattern: 'src/**/*.ts', included: false}
+            { pattern: 'src/**/*.ts', included: false }
         ],
 
         preprocessors: {
@@ -14,7 +14,7 @@ module.exports = function(config) {
             'src/**/*.ts': ['webpack']
         },
 
-        webpack: webpackConfig, 
+        webpack: webpackConfig,
 
         reporters: ["spec"],
 
@@ -23,5 +23,5 @@ module.exports = function(config) {
         mime: {
             'text/x-typescript': ['ts']
         }
-  })
+    })
 }

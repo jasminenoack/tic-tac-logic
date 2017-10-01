@@ -194,6 +194,16 @@ var IndexManager = /** @class */ (function () {
         }
         return result;
     };
+    IndexManager.indexIndexesForValue = function (board, type, index, value) {
+        var indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        var result = [];
+        indexes.forEach(function (currentIndex, subIndex) {
+            if (board.value(currentIndex) === value) {
+                result.push(subIndex);
+            }
+        });
+        return result;
+    };
     IndexManager.blanksInOrder = function (board, type, index) {
         var indexes = this.getSectionIndexes(type, index, board.width, board.height);
         var blanks = this.getBlanks(board, type, index);
@@ -242,6 +252,15 @@ var IndexManager = /** @class */ (function () {
             counts[currentType] = expectedCount - counts[currentType];
         }
         return counts;
+    };
+    IndexManager.sectionComparisonMatches = function (count) {
+        var results = [];
+        for (var i = 0; i < count; i++) {
+            for (var j = i + 1; j < count; j++) {
+                results.push([i, j]);
+            }
+        }
+        return results;
     };
     IndexManager.getSectionIndexes = function (type, index, width, height) {
         if (type === rowName) {
@@ -1767,6 +1786,32 @@ exports.easy40 = {
         [15, 6],
     ],
 };
+exports.medium1 = {
+    height: 10,
+    os: [
+        [0, 1],
+        [0, 5],
+        [3, 4],
+        [3, 6],
+        [4, 0],
+        [7, 2],
+    ],
+    width: 8,
+    xs: [
+        [0, 0],
+        [1, 3],
+        [1, 4],
+        [1, 6],
+        [5, 0],
+        [5, 4],
+        [5, 7],
+        [7, 1],
+        [8, 3],
+        [8, 4],
+        [8, 7],
+        [9, 4],
+    ],
+};
 
 
 /***/ }),
@@ -1782,6 +1827,7 @@ var consecutivePairs = "consecutivePairs";
 var oneSep = "oneSep";
 var oneGroup = "oneGroup";
 var multiGroup = "multiGroup";
+var compareSections = "compareSections";
 var flags = {
     active: "current",
     compare: "compare",
@@ -1794,6 +1840,18 @@ var StepManager = /** @class */ (function () {
     }
     StepManager.prototype.resetState = function () {
         this.state = {
+            compareSections: {
+                columns: [],
+                compareFirst: [],
+                compareSecond: [],
+                first: null,
+                firstCount: {},
+                insertPatterns: [],
+                rows: [],
+                second: null,
+                secondCount: {},
+                type: "",
+            },
             consecutivePairs: {
                 checkEmpty: [],
                 columns: [],
@@ -1855,6 +1913,8 @@ var StepManager = /** @class */ (function () {
         this.state.multiGroup.rows = rows.slice();
         this.state.multiGroup.columns = columns.slice();
         this.state.madeAChange = false;
+        this.state.compareSections.rows = indexManager_1.IndexManager.sectionComparisonMatches(this.board.height);
+        this.state.compareSections.columns = indexManager_1.IndexManager.sectionComparisonMatches(this.board.width);
     };
     StepManager.prototype.flag = function (index) {
         switch (this.currentStep()) {
@@ -1866,6 +1926,8 @@ var StepManager = /** @class */ (function () {
                 return this.getFlagFromGroupData(this.state.oneGroup, index);
             case multiGroup:
                 return this.getFlagFromGroupData(this.state.multiGroup, index);
+            case compareSections:
+                return this.getFlagFromCompareSection(this.state.compareSections, index);
         }
     };
     StepManager.prototype.currentStep = function () {
@@ -1881,6 +1943,12 @@ var StepManager = /** @class */ (function () {
         else if (this.checkGroupStep(this.state.multiGroup)) {
             return multiGroup;
         }
+        else if (this.checkCompareSectionStep(this.state.compareSections)) {
+            return compareSections;
+        }
+    };
+    StepManager.prototype.checkCompareSectionStep = function (data) {
+        return data.columns.length || data.rows.length || data.first !== null;
     };
     StepManager.prototype.checkGroupStep = function (data) {
         return data.rows.length ||
@@ -1932,11 +2000,150 @@ var StepManager = /** @class */ (function () {
             case multiGroup:
                 this.takeMultiGroupStep();
                 break;
+            case compareSections:
+                this.takeCompareSectionStep();
+                break;
             default:
                 if (this.state.madeAChange) {
                     this.setUp();
                 }
         }
+    };
+    StepManager.prototype.takeCompareSectionStep = function () {
+        var data = this.state.compareSections;
+        if (data.first !== null) {
+            this.processCompareSectionStep(data);
+        }
+        else {
+            this.nextCompareStep(data);
+        }
+    };
+    StepManager.prototype.checkIfValidCompareSections = function (data, value) {
+        // check that there is a 1 -- 0 relationship
+        if (value === "X" &&
+            !((data.firstCount.x === 0 && data.secondCount.x === 1)
+                || (data.firstCount.x === 1 && data.secondCount.x === 0))) {
+            return false;
+        }
+        if (value === "O" &&
+            !((data.firstCount.o === 0 && data.secondCount.o === 1)
+                || (data.firstCount.o === 1 && data.secondCount.o === 0))) {
+            return false;
+        }
+        // check if the sections already conflict
+        var firstIndexes = indexManager_1.IndexManager.getSectionIndexes(data.type, data.first, this.board.width, this.board.height);
+        var secondIndexes = indexManager_1.IndexManager.getSectionIndexes(data.type, data.second, this.board.width, this.board.height);
+        // tslint:disable-next-line:prefer-for-of
+        for (var i = 0; i < firstIndexes.length; i++) {
+            var firstValue = this.board.value(firstIndexes[i]);
+            var secondValue = this.board.value(secondIndexes[i]);
+            if (firstValue && secondValue && firstValue !== secondValue) {
+                return false;
+            }
+        }
+        return true;
+    };
+    StepManager.prototype.findLocationToInsertFromComparison = function (value, data) {
+        var firstIndexIndexes = indexManager_1.IndexManager.indexIndexesForValue(this.board, data.type, data.first, value);
+        var secondIndexIndexes = indexManager_1.IndexManager.indexIndexesForValue(this.board, data.type, data.second, value);
+        var union = [];
+        var difference = [];
+        while (firstIndexIndexes.length && secondIndexIndexes.length) {
+            var firstIndex = firstIndexIndexes[0];
+            var secondIndex = secondIndexIndexes[0];
+            if (firstIndex === secondIndex) {
+                union.push(firstIndexIndexes.shift());
+                secondIndexIndexes.shift();
+            }
+            else if (firstIndex < secondIndex) {
+                difference.push(firstIndexIndexes.shift());
+            }
+            else {
+                difference.push(secondIndexIndexes.shift());
+            }
+        }
+        difference = difference.concat(firstIndexIndexes).concat(secondIndexIndexes);
+        if (difference.length === 1) {
+            var firstIndexes = indexManager_1.IndexManager.getSectionIndexes(data.type, data.first, this.board.width, this.board.height);
+            var secondIndexes = indexManager_1.IndexManager.getSectionIndexes(data.type, data.second, this.board.width, this.board.height);
+            var diffIndex = difference[0];
+            if (!this.board.value(firstIndexes[diffIndex])) {
+                return firstIndexes[diffIndex];
+            }
+            else if (!this.board.value(secondIndexes[diffIndex])) {
+                return secondIndexes[diffIndex];
+            }
+        }
+    };
+    StepManager.prototype.processCompareSectionStep = function (data) {
+        var _this = this;
+        if (data.insertPatterns.length) {
+            data.insertPatterns.forEach(function (pattern) {
+                _this.insert([pattern.index], pattern.value);
+            });
+            this.resetCompareSectionStep(data);
+        }
+        else if (data.first || data.second) {
+            if (this.checkIfValidCompareSections(data, "X")) {
+                var insertLocation = this.findLocationToInsertFromComparison("X", data);
+                if (insertLocation !== undefined) {
+                    data.insertPatterns.push({ index: insertLocation, value: "O" });
+                }
+            }
+            if (this.checkIfValidCompareSections(data, "O")) {
+                var insertLocation = this.findLocationToInsertFromComparison("O", data);
+                if (insertLocation !== undefined) {
+                    data.insertPatterns.push({ index: insertLocation, value: "X" });
+                }
+            }
+            if (!data.insertPatterns.length) {
+                this.resetCompareSectionStep(data);
+            }
+        }
+        else {
+            this.resetCompareSectionStep(data);
+        }
+    };
+    StepManager.prototype.nextCompareStep = function (data) {
+        var first;
+        var second;
+        var type;
+        if (data.rows.length) {
+            type = "row";
+            _a = data.rows.shift(), first = _a[0], second = _a[1];
+        }
+        else {
+            type = "column";
+            _b = data.columns.shift() || [0, 0], first = _b[0], second = _b[1];
+        }
+        var firstLeft = indexManager_1.IndexManager.leftOver(this.board, type, first);
+        var secondLeft = indexManager_1.IndexManager.leftOver(this.board, type, second);
+        if ((first || second) &&
+            !((firstLeft.x <= 1 || firstLeft.o <= 1) && (secondLeft.x <= 1 || secondLeft.o <= 1) && (firstLeft.x + firstLeft.o + secondLeft.x + secondLeft.o !== 0))) {
+            this.nextCompareStep(data);
+            return;
+        }
+        else if (first || second) {
+            data.first = first;
+            data.second = second;
+            data.type = type;
+            data.firstCount = firstLeft;
+            data.secondCount = secondLeft;
+        }
+        else {
+            this.resetCompareSectionStep(data);
+        }
+        var _a, _b;
+    };
+    StepManager.prototype.resetCompareSectionStep = function (data) {
+        data.first = null;
+        data.second = null;
+        data.type = "";
+        data.firstCount = {};
+        data.secondCount = {};
+        data.insertPatterns = [];
+        data.compareFirst = [];
+        data.compareSecond = [];
     };
     StepManager.prototype.takeOneGroupStep = function () {
         var data = this.state.oneGroup;
@@ -2210,6 +2417,28 @@ var StepManager = /** @class */ (function () {
             (!blanks.length && data.currentType &&
                 indexManager_1.IndexManager.getSectionIndexes(data.currentType, data.currentIndex, this.board.width, this.board.height).indexOf(index) !== -1)) {
             return flags.active;
+        }
+    };
+    StepManager.prototype.getFlagFromCompareSection = function (data, index) {
+        if (data.insertPatterns.length) {
+            // tslint:disable-next-line:prefer-for-of
+            for (var i = 0; i < data.insertPatterns.length; i++) {
+                if (index === data.insertPatterns[i].index) {
+                    return "insert";
+                }
+            }
+        }
+        if (data.first !== null) {
+            var indexes = indexManager_1.IndexManager.getSectionIndexes(data.type, data.first, this.board.width, this.board.height);
+            if (indexes.indexOf(index) !== -1) {
+                return "current";
+            }
+        }
+        if (data.second !== null) {
+            var indexes = indexManager_1.IndexManager.getSectionIndexes(data.type, data.second, this.board.width, this.board.height);
+            if (indexes.indexOf(index) !== -1) {
+                return "compare";
+            }
         }
     };
     StepManager.prototype.takeConsecutivePairsStep = function () {

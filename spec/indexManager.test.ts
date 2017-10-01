@@ -771,6 +771,99 @@ describe("IndexManager", () => {
         });
     });
 
+    describe("get locations", () => {
+        let board;
+        beforeEach(() => {
+            const height = 6;
+            const width = 6;
+            const xs = [
+                [0, 1],
+                [0, 2],
+                [2, 0],
+                [4, 2],
+            ];
+            const os = [
+                [1, 5],
+                [2, 3],
+                [3, 1],
+                [4, 4],
+                [5, 4],
+            ];
+            // - X X - - -
+            // - - - - - O
+            // X - - O - -
+            // - O - - - -
+            // - - X - O -
+            // - - - - O -
+            board = new Board(width, height, xs, os);
+        });
+
+        describe("row", () => {
+            it("0", () => {
+                expect(IndexManager.indexIndexesForValue(board, "row", 0, "X")).toEqual([1 % 6, 2 % 6]);
+                expect(IndexManager.indexIndexesForValue(board, "row", 0, "O")).toEqual([]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.indexIndexesForValue(board, "row", 1, "X")).toEqual([]);
+                expect(IndexManager.indexIndexesForValue(board, "row", 1, "O")).toEqual([11 % 6]);
+            });
+
+            it("2", () => {
+                expect(IndexManager.indexIndexesForValue(board, "row", 2, "X")).toEqual([12 % 6]);
+                expect(IndexManager.indexIndexesForValue(board, "row", 2, "O")).toEqual([15 % 6]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.indexIndexesForValue(board, "row", 3, "X")).toEqual([]);
+                expect(IndexManager.indexIndexesForValue(board, "row", 3, "O")).toEqual([19 % 6]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.indexIndexesForValue(board, "row", 4, "X")).toEqual([26 % 6]);
+                expect(IndexManager.indexIndexesForValue(board, "row", 4, "O")).toEqual([28 % 6]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.indexIndexesForValue(board, "row", 5, "X")).toEqual([]);
+                expect(IndexManager.indexIndexesForValue(board, "row", 5, "O")).toEqual([34 % 6]);
+            });
+        });
+
+        describe("column", () => {
+            it("0", () => {
+                expect(IndexManager.indexIndexesForValue(board, "column", 0, "X")).toEqual([Math.floor(12 / 6)]);
+                expect(IndexManager.indexIndexesForValue(board, "column", 0, "O")).toEqual([]);
+            });
+
+            it("1", () => {
+                expect(IndexManager.indexIndexesForValue(board, "column", 1, "X")).toEqual([Math.floor(1 / 6)]);
+                expect(IndexManager.indexIndexesForValue(board, "column", 1, "O")).toEqual([Math.floor(19 / 6)]);
+            });
+
+            it("2", () => {
+                newFunction(board);
+                expect(IndexManager.indexIndexesForValue(board, "column", 2, "O")).toEqual([]);
+            });
+
+            it("3", () => {
+                expect(IndexManager.indexIndexesForValue(board, "column", 3, "X")).toEqual([]);
+                expect(IndexManager.indexIndexesForValue(board, "column", 3, "O")).toEqual([Math.floor(15 / 6)]);
+            });
+
+            it("4", () => {
+                expect(IndexManager.indexIndexesForValue(board, "column", 4, "X")).toEqual([]);
+                // tslint:disable-next-line:max-line-length
+                expect(IndexManager.indexIndexesForValue(board, "column", 4, "O")).toEqual([Math.floor(28 / 6), Math.floor(34 / 6)]);
+            });
+
+            it("5", () => {
+                expect(IndexManager.indexIndexesForValue(board, "column", 5, "X")).toEqual([]);
+                expect(IndexManager.indexIndexesForValue(board, "column", 5, "O")).toEqual([Math.floor(11 / 6)]);
+            });
+        });
+    });
+
     describe("blanks groups", () => {
         let board;
         beforeEach(() => {
@@ -862,4 +955,60 @@ describe("IndexManager", () => {
             });
         });
     });
+
+    describe("get section comparison matches", () => {
+        it("2", () => {
+            expect(IndexManager.sectionComparisonMatches(2)).toEqual([
+                [0, 1],
+            ]);
+        });
+
+        it("3", () => {
+            expect(IndexManager.sectionComparisonMatches(3)).toEqual([
+                [0, 1], [0, 2],
+                [1, 2],
+            ]);
+        });
+
+        it("4", () => {
+            expect(IndexManager.sectionComparisonMatches(4)).toEqual([
+                [0, 1], [0, 2], [0, 3],
+                [1, 2], [1, 3],
+                [2, 3],
+            ]);
+        });
+
+        xit("5", () => {
+            expect(IndexManager.sectionComparisonMatches(5)).toEqual([
+                [0, 1], [0, 2], [0, 3], [0, 4],
+                [1, 2], [1, 3], [1, 4],
+                [2, 3], [2, 4],
+                [3, 4],
+            ]);
+        });
+
+        xit("6", () => {
+            expect(IndexManager.sectionComparisonMatches(6)).toEqual([
+                [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],
+                [1, 2], [1, 3], [1, 4], [1, 5],
+                [2, 3], [2, 4], [2, 5],
+                [3, 4], [3, 5],
+                [4, 5],
+            ]);
+        });
+
+        it("7", () => {
+            expect(IndexManager.sectionComparisonMatches(7)).toEqual([
+                [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6],
+                [1, 2], [1, 3], [1, 4], [1, 5], [1, 6],
+                [2, 3], [2, 4], [2, 5], [2, 6],
+                [3, 4], [3, 5], [3, 6],
+                [4, 5], [4, 6],
+                [5, 6],
+            ]);
+        });
+    });
 });
+function newFunction(board: any) {
+    expect(IndexManager.indexIndexesForValue(board, "column", 2, "X")).toEqual([Math.floor(2 / 6), Math.floor(26 / 6)]);
+}

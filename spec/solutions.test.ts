@@ -279,4 +279,11 @@ describe("Solutions", () => {
         const puzzleData = puzzles.easy40;
         test(solution, puzzleData);
     });
+
+    it("solves puzzle medium 1", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XOOXOOXXXOOXXOXOOXXOOXOXXOXOOXOXOXOXXOXOXOXOXOOXOXXOOXXOOXOXOXXOXOOXXOOXOXXOXXOO".split("");
+        const puzzleData = puzzles.medium1;
+        test(solution, puzzleData);
+    });
 });

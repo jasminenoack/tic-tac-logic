@@ -137,6 +137,17 @@ export class IndexManager {
         return result;
     }
 
+    public static indexIndexesForValue(board, type, index, value) {
+        const indexes = this.getSectionIndexes(type, index, board.width, board.height);
+        const result = [];
+        indexes.forEach((currentIndex, subIndex) => {
+            if (board.value(currentIndex) === value) {
+                result.push(subIndex);
+            }
+        });
+        return result;
+    }
+
     public static blanksInOrder(board: Board, type: string, index: number) {
         const indexes = this.getSectionIndexes(type, index, board.width, board.height);
         const blanks = this.getBlanks(board, type, index);
@@ -184,6 +195,18 @@ export class IndexManager {
             counts[currentType] = expectedCount - counts[currentType];
         }
         return counts;
+    }
+
+    public static sectionComparisonMatches(count: number) {
+        const results = [];
+
+        for (let i = 0; i < count; i++) {
+            for (let j = i + 1; j < count; j++) {
+                results.push([i, j]);
+            }
+        }
+
+        return results;
     }
 
     public static getSectionIndexes(type: string, index: number, width: number, height: number) {
