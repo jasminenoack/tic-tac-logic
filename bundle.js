@@ -1812,6 +1812,93 @@ exports.medium1 = {
         [9, 4],
     ],
 };
+exports.medium2 = {
+    height: 10,
+    os: [
+        [2, 0],
+        [4, 5],
+        [5, 2],
+        [6, 2],
+        [7, 5],
+        [7, 7],
+    ],
+    width: 8,
+    xs: [
+        [0, 1],
+        [0, 7],
+        [2, 3],
+        [2, 5],
+        [3, 0],
+        [5, 4],
+        [6, 6],
+        [8, 1],
+        [8, 3],
+        [9, 0],
+        [9, 1],
+        [9, 4],
+    ],
+};
+exports.medium3 = {
+    height: 10,
+    os: [
+        [0, 7],
+        [1, 5],
+        [2, 2],
+        [3, 4],
+        [6, 6],
+        [8, 1],
+        [9, 3],
+    ],
+    width: 8,
+    xs: [
+        [0, 1],
+        [4, 5],
+        [5, 0],
+        [5, 1],
+        [5, 5],
+        [7, 5],
+        [9, 6],
+    ],
+};
+exports.hard1 = {
+    height: 14,
+    os: [
+        [0, 5],
+        [0, 8],
+        [1, 2],
+        [1, 5],
+        [1, 9],
+        [2, 2],
+        [3, 0],
+        [3, 5],
+        [6, 4],
+        [6, 9],
+        [8, 2],
+        [9, 9],
+        [10, 6],
+        [12, 4],
+    ],
+    width: 10,
+    xs: [
+        [1, 4],
+        [3, 3],
+        [3, 7],
+        [4, 3],
+        [5, 0],
+        [5, 5],
+        [5, 7],
+        [5, 8],
+        [7, 1],
+        [7, 7],
+        [10, 2],
+        [11, 2],
+        [11, 7],
+        [12, 0],
+        [12, 6],
+        [12, 9],
+        [13, 4],
+    ],
+};
 
 
 /***/ }),
@@ -1984,6 +2071,9 @@ var StepManager = /** @class */ (function () {
             case multiGroup:
                 // tslint:disable-next-line:max-line-length
                 return "If in a series of groups some require a value. If the number of times the value is required is equal to the number to place any other groups are the other value.";
+            case compareSections:
+                // tslint:disable-next-line:max-line-length
+                return "Two rows or columns can't be the same. So if we have 2 columns one with all of a value one missing one and they match. Then we know that last spot must be the opposite value";
         }
     };
     StepManager.prototype.takeStep = function () {

@@ -253,6 +253,9 @@ export class StepManager {
             case multiGroup:
                 // tslint:disable-next-line:max-line-length
                 return "If in a series of groups some require a value. If the number of times the value is required is equal to the number to place any other groups are the other value.";
+            case compareSections:
+                // tslint:disable-next-line:max-line-length
+                return "Two rows or columns can't be the same. So if we have 2 columns one with all of a value one missing one and they match. Then we know that last spot must be the opposite value";
         }
     }
 

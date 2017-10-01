@@ -286,4 +286,25 @@ describe("Solutions", () => {
         const puzzleData = puzzles.medium1;
         test(solution, puzzleData);
     });
+
+    it("solves puzzle medium 2", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "OXXOOXOXXOXOXOOXOXOXOXXOXOXXOXOOOOXOXOXXOXOXXOOXXOOXOXXOXOXOXOXOOXOXOXOXXXOOXOXO".split("");
+        const puzzleData = puzzles.medium2;
+        test(solution, puzzleData);
+    });
+
+    it("solves puzzle medium 3", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XXOXOXOOXOXXOOXOOXOOXXOXOOXXOOXXXOXOOXXOXXOOXXOOOXOXXOOXOOXXOXXOXOXOXOOXOXOOXOXX".split("");
+        const puzzleData = puzzles.medium3;
+        test(solution, puzzleData);
+    });
+
+    it("solves puzzle hard 1", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "XOXXOOXOOXOXOXXOOXXOXXOOXXOOXOOOXXOOXXOXOXOXXOXOOXXOXOOXOXXOXOOXOXXOXOOXXOXOOXOXXXOOXOXOOXXOOXOXOXXOOXXOOXOOXXOXXOXOXXOOXOOXOXXOOXOOXOXXOXXO".split("");
+        const puzzleData = puzzles.hard1;
+        test(solution, puzzleData);
+    });
 });
