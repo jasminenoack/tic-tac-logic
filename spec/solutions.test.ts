@@ -4,6 +4,10 @@ import { StepManager } from "../src/stepManager";
 
 describe("Solutions", () => {
     function test(solution, puzzleData) {
+        expect(solution.length).toBeTruthy();
+        if (!solution.length) {
+            return;
+        }
         const board = new Board(
             puzzleData.width,
             puzzleData.height,
@@ -14,7 +18,6 @@ describe("Solutions", () => {
         while (!manager.done()) {
             manager.takeStep();
         }
-        expect(solution.length).toBeTruthy();
         solution.forEach((letter, index) => {
             expect(letter).toEqual(board.value(index));
         });
@@ -305,6 +308,13 @@ describe("Solutions", () => {
         // tslint:disable-next-line:max-line-length
         const solution = "XOXXOOXOOXOXOXXOOXXOXXOOXXOOXOOOXXOOXXOXOXOXXOXOOXXOXOOXOXXOXOOXOXXOXOOXXOXOOXOXXXOOXOXOOXXOOXOXOXXOOXXOOXOOXXOXXOXOXXOOXOOXOXXOOXOOXOXXOXXO".split("");
         const puzzleData = puzzles.hard1;
+        test(solution, puzzleData);
+    });
+
+    it("solves puzzle hard 40", () => {
+        // tslint:disable-next-line:max-line-length
+        const solution = "".split("");
+        const puzzleData = puzzles.hard40;
         test(solution, puzzleData);
     });
 });

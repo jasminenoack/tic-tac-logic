@@ -493,7 +493,7 @@ export class StepManager {
             this.insert(data.insertInto, data.mainValue);
             this.resetOneGroup();
         } else if (Object.keys(data.count).length) {
-            this.groupDetermineInsert(data);
+            this.groupOneDetermineInsert(data);
         } else if (data.blanks.length) {
             this.groupProcessBlanks(data);
         } else {
@@ -584,19 +584,40 @@ export class StepManager {
         }
 
         if (
-            possibleInserts.length
-            && data.lowerCount
+            data.lowerCount
             && needSmallValue.length === data.lowerCount
         ) {
             possibleInserts.forEach((group) => {
                 data.insertInto = data.insertInto.concat(group);
             });
-        } else {
+
+            needSmallValue.forEach((group) => {
+                if (group.length > 3) {
+                    data.insertInto.push(group[0]);
+                    data.insertInto.push(group[group.length - 1]);
+                } else if (group.length === 3) {
+                    const neighbors = IndexManager.getNeighbors(
+                        group, data.currentType, this.board.width, this.board.height,
+                    );
+
+                    neighbors.forEach((neighbor) => {
+                        if (this.board.value(neighbor) === data.higherValue) {
+                            if (neighbor < group[0]) {
+                                data.insertInto.push(group[group.length - 1]);
+                            } else {
+                                data.insertInto.push(group[0]);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        if (!data.insertInto.length) {
             this.resetMultiGroup(data);
         }
     }
 
-    public groupDetermineInsert(data) {
+    public groupOneDetermineInsert(data) {
         const leftOver = data.count;
         if (
             leftOver.o === 0 || leftOver.x === 0

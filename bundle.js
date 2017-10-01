@@ -1899,6 +1899,115 @@ exports.hard1 = {
         [13, 4],
     ],
 };
+exports.hard40 = {
+    height: 24,
+    os: [
+        [1, 2],
+        [1, 4],
+        [1, 6],
+        [1, 11],
+        [1, 13],
+        [2, 6],
+        [2, 11],
+        [2, 17],
+        [3, 10],
+        [3, 15],
+        [3, 17],
+        [4, 4],
+        [4, 6],
+        [4, 8],
+        [4, 10],
+        [4, 15],
+        [5, 6],
+        [6, 13],
+        [7, 15],
+        [7, 17],
+        [8, 2],
+        [8, 8],
+        [8, 10],
+        [10, 2],
+        [10, 8],
+        [10, 16],
+        [10, 17],
+        [11, 0],
+        [11, 2],
+        [12, 4],
+        [12, 12],
+        [12, 16],
+        [13, 8],
+        [13, 12],
+        [14, 3],
+        [14, 10],
+        [14, 11],
+        [15, 4],
+        [15, 9],
+        [15, 10],
+        [15, 16],
+        [15, 17],
+        [16, 6],
+        [18, 4],
+        [18, 8],
+        [19, 6],
+        [19, 14],
+        [19, 16],
+        [21, 4],
+        [21, 8],
+        [22, 5],
+        [22, 12],
+        [23, 8],
+        [23, 10],
+        [23, 12],
+        [23, 16],
+    ],
+    width: 18,
+    xs: [
+        [0, 1],
+        [1, 1],
+        [1, 7],
+        [1, 10],
+        [1, 16],
+        [3, 0],
+        [3, 2],
+        [3, 14],
+        [6, 1],
+        [6, 2],
+        [6, 11],
+        [6, 16],
+        [8, 13],
+        [8, 14],
+        [9, 1],
+        [9, 6],
+        [9, 13],
+        [11, 3],
+        [12, 1],
+        [12, 10],
+        [12, 13],
+        [13, 2],
+        [13, 13],
+        [15, 1],
+        [17, 3],
+        [19, 0],
+        [19, 1],
+        [19, 3],
+        [19, 8],
+        [19, 13],
+        [19, 17],
+        [20, 0],
+        [20, 2],
+        [20, 9],
+        [20, 13],
+        [20, 15],
+        [20, 17],
+        [21, 7],
+        [22, 0],
+        [22, 2],
+        [22, 14],
+        [22, 15],
+        [23, 0],
+        [23, 3],
+        [23, 5],
+    ],
+};
 
 
 /***/ }),
@@ -2281,7 +2390,7 @@ var StepManager = /** @class */ (function () {
             this.resetOneGroup();
         }
         else if (Object.keys(data.count).length) {
-            this.groupDetermineInsert(data);
+            this.groupOneDetermineInsert(data);
         }
         else if (data.blanks.length) {
             this.groupProcessBlanks(data);
@@ -2365,18 +2474,36 @@ var StepManager = /** @class */ (function () {
             var newGroup = possibleInserts.splice(i, 2);
             needSmallValue.push(newGroup);
         }
-        if (possibleInserts.length
-            && data.lowerCount
+        if (data.lowerCount
             && needSmallValue.length === data.lowerCount) {
             possibleInserts.forEach(function (group) {
                 data.insertInto = data.insertInto.concat(group);
             });
+            needSmallValue.forEach(function (group) {
+                if (group.length > 3) {
+                    data.insertInto.push(group[0]);
+                    data.insertInto.push(group[group.length - 1]);
+                }
+                else if (group.length === 3) {
+                    var neighbors = indexManager_1.IndexManager.getNeighbors(group, data.currentType, _this.board.width, _this.board.height);
+                    neighbors.forEach(function (neighbor) {
+                        if (_this.board.value(neighbor) === data.higherValue) {
+                            if (neighbor < group[0]) {
+                                data.insertInto.push(group[group.length - 1]);
+                            }
+                            else {
+                                data.insertInto.push(group[0]);
+                            }
+                        }
+                    });
+                }
+            });
         }
-        else {
+        if (!data.insertInto.length) {
             this.resetMultiGroup(data);
         }
     };
-    StepManager.prototype.groupDetermineInsert = function (data) {
+    StepManager.prototype.groupOneDetermineInsert = function (data) {
         var _this = this;
         var leftOver = data.count;
         if (leftOver.o === 0 || leftOver.x === 0) {
@@ -2702,7 +2829,7 @@ exports = module.exports = __webpack_require__(10)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center;\n  display: block !important; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 300px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px 0px 30px 330px;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 44px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 40px;\n    width: 40px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 40px;\n    font-size: 32px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 44px;\n    position: absolute;\n    margin-top: 40px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 40px;\n      height: 40px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 19.2px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 44px;\n    position: relative;\n    margin-left: 40px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 40px;\n      height: 40px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 19.2px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 288px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 240px; }\n  #tic-tac-puzzle.width-8 {\n    width: 368px; }\n    #tic-tac-puzzle.width-8 .board-wrapper {\n      width: 320px; }\n  #tic-tac-puzzle.width-10 {\n    width: 448px; }\n    #tic-tac-puzzle.width-10 .board-wrapper {\n      width: 400px; }\n  #tic-tac-puzzle.width-12 {\n    width: 528px; }\n    #tic-tac-puzzle.width-12 .board-wrapper {\n      width: 480px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  -webkit-columns: 50px 4;\n  -moz-columns: 50px 4;\n  columns: 50px 4;\n  margin-bottom: 20px; }\n", ""]);
+exports.push([module.i, "body {\n  background: aliceblue;\n  text-align: center;\n  display: block !important; }\n\n#puzzle-data {\n  padding: 10px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  text-align: right;\n  width: 300px; }\n\n#tic-tac-puzzle {\n  box-sizing: border-box;\n  margin: 30px 0px 30px 330px;\n  position: relative; }\n  #tic-tac-puzzle .board-wrapper {\n    position: relative;\n    margin-left: 44px;\n    box-sizing: content-box;\n    border-right: 4px solid black;\n    border-bottom: 4px solid black; }\n    #tic-tac-puzzle .board-wrapper:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n  #tic-tac-puzzle .spot {\n    height: 40px;\n    width: 40px;\n    box-sizing: border-box;\n    border: 1px solid black;\n    float: left;\n    text-align: center;\n    line-height: 40px;\n    font-size: 32px; }\n    #tic-tac-puzzle .spot.current {\n      background: lime; }\n    #tic-tac-puzzle .spot.compare {\n      background: tomato; }\n    #tic-tac-puzzle .spot.insert {\n      background: navy; }\n    #tic-tac-puzzle .spot.X {\n      color: deeppink; }\n    #tic-tac-puzzle .spot.O {\n      color: deepskyblue; }\n  #tic-tac-puzzle .row-counts {\n    width: 44px;\n    position: absolute;\n    margin-top: 40px;\n    border: 4px solid navy;\n    border-right: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .row-counts .row-count {\n      width: 40px;\n      height: 40px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      position: relative; }\n      #tic-tac-puzzle .row-counts .row-count div {\n        font-size: 19.2px; }\n      #tic-tac-puzzle .row-counts .row-count .x {\n        color: deeppink;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center; }\n      #tic-tac-puzzle .row-counts .row-count .o {\n        color: deepskyblue;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle .column-counts {\n    height: 44px;\n    position: relative;\n    margin-left: 40px;\n    border: 4px solid navy;\n    border-bottom: 0;\n    background: mistyrose; }\n    #tic-tac-puzzle .column-counts:after {\n      content: \"\";\n      display: block;\n      clear: both; }\n    #tic-tac-puzzle .column-counts .column-count {\n      width: 40px;\n      height: 40px;\n      border: 1px solid black;\n      box-sizing: border-box;\n      float: left; }\n      #tic-tac-puzzle .column-counts .column-count div {\n        font-size: 19.2px; }\n      #tic-tac-puzzle .column-counts .column-count .x {\n        color: deeppink;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center; }\n      #tic-tac-puzzle .column-counts .column-count .o {\n        color: deepskyblue;\n        height: 18px;\n        width: 18px;\n        line-height: 18px;\n        text-align: center;\n        float: right; }\n  #tic-tac-puzzle.width-6 {\n    width: 288px; }\n    #tic-tac-puzzle.width-6 .board-wrapper {\n      width: 240px; }\n  #tic-tac-puzzle.width-8 {\n    width: 368px; }\n    #tic-tac-puzzle.width-8 .board-wrapper {\n      width: 320px; }\n  #tic-tac-puzzle.width-10 {\n    width: 448px; }\n    #tic-tac-puzzle.width-10 .board-wrapper {\n      width: 400px; }\n  #tic-tac-puzzle.width-12 {\n    width: 528px; }\n    #tic-tac-puzzle.width-12 .board-wrapper {\n      width: 480px; }\n  #tic-tac-puzzle.width-18 {\n    width: 768px; }\n    #tic-tac-puzzle.width-18 .board-wrapper {\n      width: 720px; }\n\n#step-text {\n  font-size: 20px;\n  margin: auto; }\n\n#start {\n  display: inline-block; }\n\n#links {\n  -webkit-columns: 50px 4;\n  -moz-columns: 50px 4;\n  columns: 50px 4;\n  margin-bottom: 20px; }\n", ""]);
 
 // exports
 
